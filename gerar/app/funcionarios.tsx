@@ -159,8 +159,12 @@ const Funcionarios = () => {
                   {funcionario.cargo} {funcionario.desativado ? '(Desativado)' : ''}
                 </Text>
 
+         
                 {expandedFuncionario === index && (
                   <View style={styles.funcionarioDetails}>
+                    {funcionario.funcao && (
+                      <Text style={styles.funcionarioInfo}>Função: {funcionario.funcao}</Text>
+                    )}
                     {funcionario.telefone && (
                       <Text style={styles.funcionarioInfo}>Telefone: {funcionario.telefone}</Text>
                     )}
@@ -172,6 +176,9 @@ const Funcionarios = () => {
                     )}
                     {funcionario.cep && (
                       <Text style={styles.funcionarioInfo}>CEP: {funcionario.cep}</Text>
+                    )}
+                    {funcionario.logradouro && (
+                      <Text style={styles.funcionarioInfo}>Endereço: {funcionario.logradouro} N°{funcionario.numero}</Text>
                     )}
 
                     <View style={styles.optionsContainer}>
@@ -200,62 +207,74 @@ const Funcionarios = () => {
       </ScrollView>
 
       {/* Modal de Edição */}
-      <Modal visible={modalVisible} animationType="slide" transparent={true}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Editar Funcionário</Text>
+     <Modal visible={modalVisible} animationType="slide" transparent={true}>
+  <View style={styles.modalContainer}>
+    <View style={styles.modalContent}>
+      <Text style={styles.modalTitle}>Editar Funcionário</Text>
 
-            <TextInput
-              style={styles.input}
-              value={funcionarioEditando?.nome}
-              onChangeText={(text) => atualizarCampo('nome', text)}
-              placeholder="Nome"
-            />
-            <TextInput
-              style={styles.input}
-              value={funcionarioEditando?.cargo}
-              onChangeText={(text) => atualizarCampo('cargo', text)}
-              placeholder="Cargo"
-            />
-            <TextInput
-              style={styles.input}
-              value={funcionarioEditando?.telefone}
-              onChangeText={(text) => atualizarCampo('telefone', text)}
-              placeholder="Telefone"
-            />
-            <TextInput
-              style={styles.input}
-              value={funcionarioEditando?.endereco}
-              onChangeText={(text) => atualizarCampo('endereco', text)}
-              placeholder="Endereço"
-            />
-            <TextInput
-              style={styles.input}
-              value={funcionarioEditando?.cidade}
-              onChangeText={(text) => atualizarCampo('cidade', text)}
-              placeholder="Cidade"
-            />
-            <TextInput
-              style={styles.input}
-              value={funcionarioEditando?.cep}
-              onChangeText={(text) => atualizarCampo('cep', text)}
-              placeholder="CEP"
-            />
+      <Text style={styles.label}>Nome</Text>
+      <TextInput
+        style={styles.input}
+        value={funcionarioEditando?.nome}
+        onChangeText={(text) => atualizarCampo('nome', text)}
+        placeholder="Nome"
+      />
 
-            <View style={styles.modalButtons}>
-              <TouchableOpacity style={styles.optionButton} onPress={salvarEdicao}>
-                <Text style={styles.optionText}>Salvar</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.optionButton, { borderColor: 'gray' }]}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={styles.optionText}>Cancelar</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      <Text style={styles.label}>Função</Text>
+      <TextInput
+        style={styles.input}
+        value={funcionarioEditando?.funcao}
+        onChangeText={(text) => atualizarCampo('funcao', text)}
+        placeholder="funcao"
+      />
+
+      <Text style={styles.label}>Telefone</Text>
+      <TextInput
+        style={styles.input}
+        value={funcionarioEditando?.telefone}
+        onChangeText={(text) => atualizarCampo('telefone', text)}
+        placeholder="Telefone"
+      />
+
+      <Text style={styles.label}>Endereço</Text>
+      <TextInput
+        style={styles.input}
+        value={funcionarioEditando?.endereco}
+        onChangeText={(text) => atualizarCampo('endereco', text)}
+        placeholder="Endereço"
+      />
+
+      <Text style={styles.label}>Cidade</Text>
+      <TextInput
+        style={styles.input}
+        value={funcionarioEditando?.cidade}
+        onChangeText={(text) => atualizarCampo('cidade', text)}
+        placeholder="Cidade"
+      />
+
+      <Text style={styles.label}>CEP</Text>
+      <TextInput
+        style={styles.input}
+        value={funcionarioEditando?.cep}
+        onChangeText={(text) => atualizarCampo('cep', text)}
+        placeholder="CEP"
+      />
+
+      <View style={styles.modalButtons}>
+        <TouchableOpacity style={styles.optionButton} onPress={salvarEdicao}>
+          <Text style={styles.optionText}>Salvar</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.optionButton]}
+          onPress={() => setModalVisible(false)}
+        >
+          <Text style={styles.optionText}>Cancelar</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </View>
+</Modal>
+
     </Layout>
   );
 };
@@ -267,6 +286,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#ddd',
   },
+  label: {
+  fontSize: 16,
+  fontWeight: 'bold',
+  marginBottom: 4,
+  marginTop: 12,
+  color: '#0B3B60',
+},
+
   searchInput: {
     width: '100%',
     height: 60,
@@ -354,6 +381,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: '#0B3B60'
   },
   input: {
     borderWidth: 1,
