@@ -5,8 +5,8 @@ import { useRouter } from 'expo-router';
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
-  const handleCadastrarMedico = () => {
-    router.push('/Cadastro/CadastroMedic'); 
+  const handleConsulta = () => {
+    router.push('/Cadastro/CadastroConsult'); 
   };
 
   return (
@@ -15,8 +15,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         {children}
       </View>
 
-      <TouchableOpacity style={styles.fixedButton} onPress={handleCadastrarMedico}>
-        <Text style={styles.buttonText}>Cadastrar médico</Text>
+      <TouchableOpacity style={styles.fixedButton} onPress={handleConsulta}>
+        <Text style={styles.buttonText}>Agendar nova consulta</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );

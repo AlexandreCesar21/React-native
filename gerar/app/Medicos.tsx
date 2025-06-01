@@ -9,6 +9,8 @@ import {
   Alert,
   Modal,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import Layout from '../components/layout_medic';
 
 const ListaMedicos = () => {
@@ -20,7 +22,19 @@ const ListaMedicos = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [medicoSelecionado, setMedicoSelecionado] = useState<any>(null);
 
-  
+  useEffect(() => {
+    carregarMedicos();
+  }, []);
+
+  const carregarMedicos = async () => {
+    try {
+      const lista = await AsyncStorage.getItem('medicos');
+      if (lista) setMedicos(JSON.parse(lista));
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível carregar os médicos.');
+    }
+  };
+
   const handleSearchChange = (text: string) => {
     setSearchQuery(text);
   };

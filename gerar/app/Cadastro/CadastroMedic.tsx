@@ -3,7 +3,7 @@ import { View, Text, TextInput, StyleSheet, Button, ScrollView, Alert, Touchable
 import { Picker } from '@react-native-picker/picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import Layout from './components/layout_Cadastmedico';
+import Layout from '@/components/layout_Cadastmedico';
 
 const CadastroMedico = () => {
   const [nome, setNome] = useState('');

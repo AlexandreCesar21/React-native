@@ -6,7 +6,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   const handleCadastrarMedico = () => {
-    router.push('/Cadastro/CadastroMedic'); 
+    router.push('/Cadastro/CadastroFuncion'); 
   };
 
   return (
@@ -16,7 +16,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       </View>
 
       <TouchableOpacity style={styles.fixedButton} onPress={handleCadastrarMedico}>
-        <Text style={styles.buttonText}>Cadastrar médico</Text>
+        <Text style={styles.buttonText}>Cadastrar funcionários</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
