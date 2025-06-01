@@ -40,6 +40,7 @@ export default function RootLayout() {
                 <Stack.Screen name="inicial" options={{ 
                     headerTitle: "", // Remove o nome da tela
                     headerBackTitleVisible: false, // Remove o texto do botão de voltar (opcional)
+                    headerShown: false
                 }} />
             </Stack>
     );

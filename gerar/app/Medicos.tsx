@@ -110,14 +110,18 @@ const salvarEdicao = async () => {
 
   return (
     <Layout>
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Pesquisar médico"
-          value={searchQuery}
-          onChangeText={handleSearchChange}
-        />
-      </View>
+  <View style={styles.searchContainer}>
+  <View style={styles.searchBox}>
+    <Icon name="search" size={20} color="#888" style={styles.searchIcon} />
+    <TextInput
+      style={styles.searchInput}
+      placeholder="Pesquisar médico"
+      value={searchQuery}
+      onChangeText={handleSearchChange}
+      placeholderTextColor="#888"
+    />
+  </View>
+</View>
 
       <ScrollView style={styles.scrollContainer}>
         {medicosFiltrados.map((medico: any, index: number) => (
@@ -228,6 +232,7 @@ const salvarEdicao = async () => {
     <View style={styles.modalContainer}>
       <Text style={styles.modalTitle}>Editar Perfil do Médico</Text>
 
+      <Text style={styles.label}>Nome</Text>
       <TextInput
         style={styles.searchInput}
         placeholder="Nome"
@@ -235,6 +240,7 @@ const salvarEdicao = async () => {
         onChangeText={(text) => setDadosEditados({ ...dadosEditados, nome: text })}
       />
 
+      <Text style={styles.label}>Especialidade</Text>
       <TextInput
         style={styles.searchInput}
         placeholder="Especialidade"
@@ -242,6 +248,7 @@ const salvarEdicao = async () => {
         onChangeText={(text) => setDadosEditados({ ...dadosEditados, especialidade1: text })}
       />
 
+      <Text style={styles.label}>CRM</Text>
       <TextInput
         style={styles.searchInput}
         placeholder="CRM"
@@ -249,6 +256,7 @@ const salvarEdicao = async () => {
         onChangeText={(text) => setDadosEditados({ ...dadosEditados, crm: text })}
       />
 
+      <Text style={styles.label}>UF</Text>
       <TextInput
         style={styles.searchInput}
         placeholder="UF"
@@ -256,6 +264,7 @@ const salvarEdicao = async () => {
         onChangeText={(text) => setDadosEditados({ ...dadosEditados, uf: text })}
       />
 
+      <Text style={styles.label}>Email</Text>
       <TextInput
         style={styles.searchInput}
         placeholder="Email"
@@ -263,6 +272,7 @@ const salvarEdicao = async () => {
         onChangeText={(text) => setDadosEditados({ ...dadosEditados, email: text })}
       />
 
+      <Text style={styles.label}>Telefone</Text>
       <TextInput
         style={styles.searchInput}
         placeholder="Telefone"
@@ -281,6 +291,9 @@ const salvarEdicao = async () => {
   </View>
 </Modal>
 
+
+
+
     </Layout>
   );
 };
@@ -292,6 +305,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#ddd',
   },
+  label: {
+  fontSize: 14,
+  fontWeight: 'bold',
+  marginTop: 10,
+  marginBottom: 4,
+  color: '#0B3B60',
+},
   searchInput: {
     width: '100%',
     height: 50,
@@ -301,6 +321,33 @@ const styles = StyleSheet.create({
     paddingLeft: 15,
     fontSize: 16,
   },
+  searchContainer: {
+  paddingHorizontal: 16,
+  marginBottom: 12,
+},
+
+searchBox: {
+  flexDirection: 'row',
+  alignItems: 'center',
+  backgroundColor: '#fff',
+  borderRadius: 8,
+  borderWidth: 1,
+  borderColor: '#ccc',
+  paddingHorizontal: 12,
+  height: 48,
+},
+
+searchIcon: {
+  marginRight: 8,
+},
+
+searchInput: {
+  flex: 1,
+  fontSize: 16,
+  color: '#000',
+  paddingVertical: 0,
+},
+
   scrollContainer: {
     flex: 1,
     padding: 20,
