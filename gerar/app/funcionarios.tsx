@@ -258,15 +258,16 @@ const Funcionarios = () => {
       />
 
       <View style={styles.modalButtons}>
-        <TouchableOpacity style={styles.optionButton} onPress={salvarEdicao}>
-          <Text style={styles.optionText}>Salvar</Text>
-        </TouchableOpacity>
         <TouchableOpacity
           style={[styles.optionButton]}
           onPress={() => setModalVisible(false)}
         >
           <Text style={styles.optionText}>Cancelar</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.optionButton} onPress={salvarEdicao}>
+          <Text style={styles.optionText}>Salvar</Text>
+        </TouchableOpacity>
+
       </View>
     </View>
   </View>
