@@ -230,66 +230,72 @@ const salvarEdicao = async () => {
 >
   <View style={styles.modalOverlay}>
     <View style={styles.modalContainer}>
-      <Text style={styles.modalTitle}>Editar Perfil do Médico</Text>
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 20 }}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Text style={styles.modalTitle}>Editar Perfil do Médico</Text>
 
-      <Text style={styles.label}>Nome</Text>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Nome"
-        value={dadosEditados.nome}
-        onChangeText={(text) => setDadosEditados({ ...dadosEditados, nome: text })}
-      />
+        <Text style={styles.label}>Nome</Text>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Nome"
+          value={dadosEditados.nome}
+          onChangeText={(text) => setDadosEditados({ ...dadosEditados, nome: text })}
+        />
 
-      <Text style={styles.label}>Especialidade</Text>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Especialidade"
-        value={dadosEditados.especialidade1}
-        onChangeText={(text) => setDadosEditados({ ...dadosEditados, especialidade1: text })}
-      />
+        <Text style={styles.label}>Especialidade</Text>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Especialidade"
+          value={dadosEditados.especialidade1}
+          onChangeText={(text) => setDadosEditados({ ...dadosEditados, especialidade1: text })}
+        />
 
-      <Text style={styles.label}>CRM</Text>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="CRM"
-        value={dadosEditados.crm}
-        onChangeText={(text) => setDadosEditados({ ...dadosEditados, crm: text })}
-      />
+        <Text style={styles.label}>CRM</Text>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="CRM"
+          value={dadosEditados.crm}
+          onChangeText={(text) => setDadosEditados({ ...dadosEditados, crm: text })}
+        />
 
-      <Text style={styles.label}>UF</Text>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="UF"
-        value={dadosEditados.uf}
-        onChangeText={(text) => setDadosEditados({ ...dadosEditados, uf: text })}
-      />
+        <Text style={styles.label}>UF</Text>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="UF"
+          value={dadosEditados.uf}
+          onChangeText={(text) => setDadosEditados({ ...dadosEditados, uf: text })}
+        />
 
-      <Text style={styles.label}>Email</Text>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Email"
-        value={dadosEditados.email}
-        onChangeText={(text) => setDadosEditados({ ...dadosEditados, email: text })}
-      />
+        <Text style={styles.label}>Email</Text>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Email"
+          value={dadosEditados.email}
+          onChangeText={(text) => setDadosEditados({ ...dadosEditados, email: text })}
+        />
 
-      <Text style={styles.label}>Telefone</Text>
-      <TextInput
-        style={styles.searchInput}
-        placeholder="Telefone"
-        value={dadosEditados.telefone}
-        onChangeText={(text) => setDadosEditados({ ...dadosEditados, telefone: text })}
-      />
+        <Text style={styles.label}>Telefone</Text>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Telefone"
+          value={dadosEditados.telefone}
+          onChangeText={(text) => setDadosEditados({ ...dadosEditados, telefone: text })}
+        />
 
-      <TouchableOpacity style={styles.desativarButton} onPress={salvarEdicao}>
-        <Text style={styles.desativarButtonText}>Salvar Alterações</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.desativarButton} onPress={salvarEdicao}>
+          <Text style={styles.desativarButtonText}>Salvar Alterações</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity style={styles.cancelarButton} onPress={fecharModalEditar}>
-        <Text style={styles.cancelarButtonText}>Cancelar</Text>
-      </TouchableOpacity>
+        <TouchableOpacity style={styles.cancelarButton} onPress={fecharModalEditar}>
+          <Text style={styles.cancelarButtonText}>Cancelar</Text>
+        </TouchableOpacity>
+      </ScrollView>
     </View>
   </View>
 </Modal>
+
 
 
 
@@ -313,14 +319,14 @@ const styles = StyleSheet.create({
   color: '#0B3B60',
 },
   searchInput: {
-    width: '100%',
-    height: 50,
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingLeft: 15,
-    fontSize: 16,
-  },
+  borderWidth: 2,
+  borderColor: '#007BFF', // Azul vibrante
+  borderRadius: 8,
+  padding: 10,
+  marginBottom: 12,
+  color: '#000',
+  backgroundColor: '#fff',
+},
   searchContainer: {
   paddingHorizontal: 16,
   marginBottom: 12,

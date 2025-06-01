@@ -156,15 +156,12 @@ const Funcionarios = () => {
                     funcionario.desativado && { color: 'red', textDecorationLine: 'line-through' },
                   ]}
                 >
-                  {funcionario.cargo} {funcionario.desativado ? '(Desativado)' : ''}
+                  {funcionario.funcao}
                 </Text>
 
          
                 {expandedFuncionario === index && (
                   <View style={styles.funcionarioDetails}>
-                    {funcionario.funcao && (
-                      <Text style={styles.funcionarioInfo}>Função: {funcionario.funcao}</Text>
-                    )}
                     {funcionario.telefone && (
                       <Text style={styles.funcionarioInfo}>Telefone: {funcionario.telefone}</Text>
                     )}

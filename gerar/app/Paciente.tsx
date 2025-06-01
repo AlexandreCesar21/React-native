@@ -1,34 +1,81 @@
-import React, { useState } from 'react';
-import { Text, StyleSheet, View, TextInput, Image, ScrollView, TouchableOpacity } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import {
+  Text,
+  StyleSheet,
+  View,
+  TextInput,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
 import Layout from '../components/layour_pacien';
 import Icon from 'react-native-vector-icons/Feather';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from 'expo-router';
 
 const ListaPacientes = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [expandedMedico, setExpandedMedico] = useState<number | null>(null);
+  const [expandedPacienteNome, setExpandedPacienteNome] = useState<string | null>(null);
+  const [pacientes, setPacientes] = useState<any[]>([]);
 
   const handleSearchChange = (text: string) => {
     setSearchQuery(text);
   };
 
-  const handleToggleExpand = (index: number) => {
-    setExpandedMedico(expandedMedico === index ? null : index);
+  const handleToggleExpand = (nome: string) => {
+    setExpandedPacienteNome(expandedPacienteNome === nome ? null : nome);
   };
 
-  const medicos = [
-    { nome: 'Adriano Moreira Sales', cidade: 'São Paulo', email: 'adriano@gmail.com' , telefone: '(51) 99999-8888', endereco: 'Av. das Graças Altas, 633 - Curitiba/PR', cep: '66.777-100' },
-    { nome: 'Amanda Siqueira', cidade: 'São Paulo', email: 'amanda@gmail.com' , telefone: '(51) 99999-8888', endereco: 'Av. das Graças Altas, 633 - Curitiba/PR', cep: '66.777-100' },
-    { nome: 'Antônio Santana', cidade: 'São Paulo', email: 'antonio@gmail.com' , telefone: '(51) 99999-8888', endereco: 'Av. das Graças Altas, 633 - Curitiba/PR', cep: '66.777-100' },
-    { nome: 'Barbara Aparecida',  cidade: 'São Paulo', email: 'barbara@gmail.com' , telefone: '(51) 99999-8888', endereco: 'Av. das Graças Altas, 633 - Curitiba/PR', cep: '66.777-100' },
-    { nome: 'Bernardo Oliveira',  cidade: 'São Paulo', email: 'bernardo@gmail.com' , telefone: '(51) 99999-8888', endereco: 'Av. das Graças Altas, 633 - Curitiba/PR', cep: '66.777-100' },
-    { nome: 'Brenda de Almeida', cidade: 'Curitiba/PR', email: 'brenda@gmail.com' , telefone: '(51) 99999-8888', endereco: 'Av. das Graças Altas, 633 - Curitiba/PR', cep: '66.777-100' },
-  ];
+  useFocusEffect(
+    useCallback(() => {
+      const carregarPacientes = async () => {
+        try {
+          const dados = await AsyncStorage.getItem('pacientes');
+          if (dados) {
+            setPacientes(JSON.parse(dados));
+          }
+        } catch (erro) {
+          console.log('Erro ao carregar pacientes:', erro);
+        }
+      };
 
-  const medicosFiltrados = medicos
-    .filter((medico) => medico.nome.toLowerCase().includes(searchQuery.toLowerCase()))
+      carregarPacientes();
+    }, [])
+  );
+
+  const handleDeletePaciente = (nome: string) => {
+    Alert.alert(
+      'Confirmar exclusão',
+      'Tem certeza que deseja desativar este perfil?',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+        },
+        {
+          text: 'Excluir',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const novaLista = pacientes.filter((p) => p.nome !== nome);
+              await AsyncStorage.setItem('pacientes', JSON.stringify(novaLista));
+              setPacientes(novaLista);
+              setExpandedPacienteNome(null);
+            } catch (error) {
+              console.log('Erro ao excluir paciente:', error);
+            }
+          },
+        },
+      ]
+    );
+  };
+
+  const pacientesFiltrados = pacientes
+    .filter((p) => p.nome.toLowerCase().includes(searchQuery.toLowerCase()))
     .sort((a, b) => a.nome.localeCompare(b.nome));
 
-  const letras = ['A', 'B'];
+  const letras = [...new Set(pacientes.map((p) => p.nome.charAt(0).toUpperCase()))].sort();
 
   return (
     <Layout>
@@ -44,77 +91,88 @@ const ListaPacientes = () => {
 
       <ScrollView style={styles.scrollContainer}>
         {searchQuery.length > 0 ? (
-       
-          medicosFiltrados.map((medico, index) => (
-            <View key={index} style={styles.medicoContainer}>
-              <View style={styles.medicoHeader}>
-                <Text style={styles.medicoName}>{medico.nome}</Text>
+          pacientesFiltrados.map((paciente) => (
+            <View key={paciente.nome} style={styles.pacienteContainer}>
+              <View style={styles.pacienteHeader}>
+                <Text style={styles.pacienteName}>{paciente.nome}</Text>
                 <TouchableOpacity
                   style={styles.arrowContainer}
-                  onPress={() => handleToggleExpand(index)}
+                  onPress={() => handleToggleExpand(paciente.nome)}
                 >
-                  <Icon name={expandedMedico === index ? 'chevron-down' : 'chevron-right'} size={24} color="#007BFF" />
+                  <Icon
+                    name={expandedPacienteNome === paciente.nome ? 'chevron-down' : 'chevron-right'}
+                    size={24}
+                    color="#007BFF"
+                  />
                 </TouchableOpacity>
               </View>
-              <Text style={styles.medicoInfo}>{medico.telefone}</Text>
+              <Text style={styles.pacienteInfo}>{paciente.telefone}</Text>
 
-              {expandedMedico === index && (
-                <View style={styles.medicoDetails}>
-                  {medico.email && <Text style={styles.medicoInfo}>{medico.email}</Text>}
-                  {medico.endereco && <Text style={styles.medicoInfo}>{medico.endereco}</Text>}
-                  {medico.cidade && <Text style={styles.medicoInfo}>{medico.cidade}</Text>}
-                  {medico.cep && <Text style={styles.medicoInfo}>CEP: {medico.cep}</Text>}
+              {expandedPacienteNome === paciente.nome && (
+                <View style={styles.pacienteDetails}>
+                  {paciente.email && <Text style={styles.pacienteInfo}>{paciente.email}</Text>}
+                  {paciente.endereco && <Text style={styles.pacienteInfo}>{paciente.endereco}</Text>}
+                  {paciente.cidade && <Text style={styles.pacienteInfo}>{paciente.cidade}</Text>}
+                  {paciente.cep && <Text style={styles.pacienteInfo}>CEP: {paciente.cep}</Text>}
                   <View style={styles.optionsContainer}>
                     <TouchableOpacity style={styles.optionButton}>
                       <Text style={styles.optionText}>Editar</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.optionButton}>
+                    <TouchableOpacity
+                      style={styles.optionButton}
+                      onPress={() => handleDeletePaciente(paciente.nome)}
+                    >
                       <Text style={styles.optionText}>Desativar perfil</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
               )}
-
               <View style={styles.line} />
             </View>
           ))
         ) : (
-         
           letras.map((letra) => (
             <View key={letra} style={styles.letterSection}>
               <Text style={styles.letterTitle}>{letra}</Text>
-              {medicosFiltrados
-                .filter(medico => medico.nome.toUpperCase().charAt(0) === letra)
-                .map((medico, index) => (
-                  <View key={index} style={styles.medicoContainer}>
-                    <View style={styles.medicoHeader}>
-                      <Text style={styles.medicoName}>{medico.nome}</Text>
+              {pacientesFiltrados
+                .filter((paciente) => paciente.nome.toUpperCase().startsWith(letra))
+                .map((paciente) => (
+                  <View key={paciente.nome} style={styles.pacienteContainer}>
+                    <View style={styles.pacienteHeader}>
+                      <Text style={styles.pacienteName}>{paciente.nome}</Text>
                       <TouchableOpacity
                         style={styles.arrowContainer}
-                        onPress={() => handleToggleExpand(index)}
+                        onPress={() => handleToggleExpand(paciente.nome)}
                       >
-                        <Icon name={expandedMedico === index ? 'chevron-down' : 'chevron-right'} size={24} color="#007BFF" />
+                        <Icon
+                          name={expandedPacienteNome === paciente.nome ? 'chevron-down' : 'chevron-right'}
+                          size={24}
+                          color="#007BFF"
+                        />
                       </TouchableOpacity>
                     </View>
-                    <Text style={styles.medicoInfo}>{medico.telefone}</Text>
+                    <Text style={styles.pacienteInfo}>Sangue: {paciente.sangue}</Text>
 
-                    {expandedMedico === index && (
-                      <View style={styles.medicoDetails}>
-                        {medico.email && <Text style={styles.medicoInfo}>{medico.email}</Text>}
-                        {medico.endereco && <Text style={styles.medicoInfo}>{medico.endereco}</Text>}
-                        {medico.cidade && <Text style={styles.medicoInfo}>{medico.cidade}</Text>}
-                        {medico.cep && <Text style={styles.medicoInfo}>CEP: {medico.cep}</Text>}
+                    {expandedPacienteNome === paciente.nome && (
+                      <View style={styles.pacienteDetails}>
+                        {paciente.email && <Text style={styles.pacienteInfo}>Email: {paciente.email}</Text>}
+                        {paciente.numero && <Text style={styles.pacienteInfo}>Telefone: {paciente.telefone}</Text>}
+                        {paciente.logradouro && <Text style={styles.pacienteInfo}>Endereço: {paciente.logradouro} N°{paciente.numero}</Text>}
+                        {paciente.cidade && <Text style={styles.pacienteInfo}>Cidade: {paciente.cidade}</Text>}
+                        {paciente.cep && <Text style={styles.pacienteInfo}>CEP: {paciente.cep}</Text>}
                         <View style={styles.optionsContainer}>
                           <TouchableOpacity style={styles.optionButton}>
                             <Text style={styles.optionText}>Editar</Text>
                           </TouchableOpacity>
-                          <TouchableOpacity style={styles.optionButton}>
+                          <TouchableOpacity
+                            style={styles.optionButton}
+                            onPress={() => handleDeletePaciente(paciente.nome)}
+                          >
                             <Text style={styles.optionText}>Desativar perfil</Text>
                           </TouchableOpacity>
                         </View>
                       </View>
                     )}
-
                     <View style={styles.line} />
                   </View>
                 ))}
@@ -162,17 +220,25 @@ const styles = StyleSheet.create({
     color: '#007BFF',
     marginBottom: 10,
   },
-  medicoContainer: {
+  pacienteContainer: {
     marginBottom: 15,
   },
-  medicoHeader: {
+  pacienteHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  medicoName: {
+  pacienteName: {
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  pacienteInfo: {
+    fontSize: 14,
+    marginTop: 4,
+    color: '#333',
+  },
+  pacienteDetails: {
+    marginTop: 8,
   },
   line: {
     borderBottomWidth: 1,
@@ -185,19 +251,18 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   optionButton: {
-    backgroundColor: '#fff', 
+    backgroundColor: '#fff',
     paddingVertical: 5,
     paddingHorizontal: 15,
     borderRadius: 5,
     marginHorizontal: 5,
-    borderWidth: 2, 
-    borderColor: '#0B3B60', 
-
+    borderWidth: 2,
+    borderColor: '#0B3B60',
   },
   optionText: {
-    color: '#0B3B60', 
+    color: '#0B3B60',
     fontSize: 14,
-  }
+  },
 });
 
 export default ListaPacientes;
