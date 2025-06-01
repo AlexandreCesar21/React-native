@@ -22,6 +22,35 @@ const ListaMedicos = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [medicoSelecionado, setMedicoSelecionado] = useState<any>(null);
 
+  const [modalEditarVisible, setModalEditarVisible] = useState(false);
+  const [dadosEditados, setDadosEditados] = useState<any>({});
+  
+  const abrirModalEditar = (medico: any) => {
+  setMedicoSelecionado(medico);
+  setDadosEditados({ ...medico }); // copia os dados atuais
+  setModalEditarVisible(true);
+};
+
+const fecharModalEditar = () => {
+  setModalEditarVisible(false);
+  setMedicoSelecionado(null);
+};
+
+const salvarEdicao = async () => {
+  try {
+    const novaLista = medicos.map((m: any) =>
+      m.id === dadosEditados.id ? dadosEditados : m
+    );
+    await AsyncStorage.setItem('medicos', JSON.stringify(novaLista));
+    setMedicos(novaLista);
+    fecharModalEditar();
+    Alert.alert('Sucesso', 'Perfil editado com sucesso.');
+  } catch (error) {
+    Alert.alert('Erro', 'Não foi possível salvar as alterações.');
+  }
+};
+
+
   useEffect(() => {
     carregarMedicos();
   }, []);
@@ -132,10 +161,11 @@ const ListaMedicos = () => {
                   <View style={styles.optionsContainer}>
                     <TouchableOpacity
                       style={styles.optionButton}
-                      onPress={() => Alert.alert('Editar', 'Funcionalidade de editar aqui')}
+                      onPress={() => abrirModalEditar(medico)}
                     >
                       <Text style={styles.optionText}>Editar</Text>
                     </TouchableOpacity>
+
                     <TouchableOpacity
                       style={[styles.optionButton, { backgroundColor: '#fff', borderColor: '#0B3B60' }]}
                       onPress={() => abrirModalDesativar(medico)}
@@ -188,6 +218,69 @@ const ListaMedicos = () => {
           </View>
         </View>
       </Modal>
+      <Modal
+  visible={modalEditarVisible}
+  animationType="slide"
+  transparent
+  onRequestClose={fecharModalEditar}
+>
+  <View style={styles.modalOverlay}>
+    <View style={styles.modalContainer}>
+      <Text style={styles.modalTitle}>Editar Perfil do Médico</Text>
+
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Nome"
+        value={dadosEditados.nome}
+        onChangeText={(text) => setDadosEditados({ ...dadosEditados, nome: text })}
+      />
+
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Especialidade"
+        value={dadosEditados.especialidade1}
+        onChangeText={(text) => setDadosEditados({ ...dadosEditados, especialidade1: text })}
+      />
+
+      <TextInput
+        style={styles.searchInput}
+        placeholder="CRM"
+        value={dadosEditados.crm}
+        onChangeText={(text) => setDadosEditados({ ...dadosEditados, crm: text })}
+      />
+
+      <TextInput
+        style={styles.searchInput}
+        placeholder="UF"
+        value={dadosEditados.uf}
+        onChangeText={(text) => setDadosEditados({ ...dadosEditados, uf: text })}
+      />
+
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Email"
+        value={dadosEditados.email}
+        onChangeText={(text) => setDadosEditados({ ...dadosEditados, email: text })}
+      />
+
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Telefone"
+        value={dadosEditados.telefone}
+        onChangeText={(text) => setDadosEditados({ ...dadosEditados, telefone: text })}
+      />
+
+      <TouchableOpacity style={styles.desativarButton} onPress={salvarEdicao}>
+        <Text style={styles.desativarButtonText}>Salvar Alterações</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.cancelarButton} onPress={fecharModalEditar}>
+        <Text style={styles.cancelarButtonText}>Cancelar</Text>
+      </TouchableOpacity>
+    </View>
+  </View>
+</Modal>
+
     </Layout>
   );
 };
