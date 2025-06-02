@@ -27,6 +27,80 @@ const Calendario = () => {
   const [consultaSelecionadaIndex, setConsultaSelecionadaIndex] = useState<number | null>(null);
   const [motivoCancelamento, setMotivoCancelamento] = useState('');
 
+  const [modalEditarVisible, setModalEditarVisible] = useState(false);
+  const [novaData, setNovaData] = useState('');
+  const [novaHora, setNovaHora] = useState('');
+
+  const abrirModalEditar = (index: number) => {
+  const consulta = agendamentos[index];
+  setConsultaSelecionadaIndex(index);
+  setNovaData(consulta.data);
+  setNovaHora(consulta.hora);
+  setModalEditarVisible(true);
+};
+
+const salvarEdicao = async () => {
+  if (!novaData.trim() || !novaHora.trim()) {
+    Alert.alert('Aviso', 'Preencha todos os campos.');
+    return;
+  }
+
+  if (consultaSelecionadaIndex === null) return;
+
+  try {
+    const novaLista = [...agendamentos];
+    novaLista[consultaSelecionadaIndex] = {
+      ...novaLista[consultaSelecionadaIndex],
+      data: novaData,
+      hora: novaHora,
+    };
+    await AsyncStorage.setItem('agendamentos', JSON.stringify(novaLista));
+    setAgendamentos(novaLista);
+    setModalEditarVisible(false);
+    setConsultaSelecionadaIndex(null);
+    setNovaData('');
+    setNovaHora('');
+    setExpandedIndex(null);
+  } catch (error) {
+    console.error('Erro ao editar consulta:', error);
+  }
+};
+
+const aplicarMascaraData = (text: string) => {
+  // Remove tudo que não for número
+  const cleaned = text.replace(/\D/g, '');
+
+  // Aplica a máscara DD/MM/AAAA
+  let masked = '';
+  if (cleaned.length <= 2) {
+    masked = cleaned;
+  } else if (cleaned.length <= 4) {
+    masked = `${cleaned.slice(0, 2)}/${cleaned.slice(2)}`;
+  } else {
+    masked = `${cleaned.slice(0, 2)}/${cleaned.slice(2, 4)}/${cleaned.slice(4, 8)}`;
+  }
+
+  return masked;
+};
+
+const aplicarMascaraHora = (text: string) => {
+  // Remove tudo que não for número
+  const cleaned = text.replace(/\D/g, '');
+
+  // Aplica a máscara HH:MM
+  let masked = '';
+  if (cleaned.length <= 2) {
+    masked = cleaned;
+  } else {
+    masked = `${cleaned.slice(0, 2)}:${cleaned.slice(2, 4)}`;
+  }
+
+  return masked;
+};
+
+
+
+
   const router = useRouter();
 
   useFocusEffect(
@@ -136,9 +210,7 @@ const Calendario = () => {
                 <View style={styles.optionsContainer}>
                   <TouchableOpacity
                     style={styles.optionButton}
-                    onPress={() => {
-                      // Placeholder para editar
-                    }}
+                    onPress={() => abrirModalEditar(index)}
                   >
                     <Text style={styles.optionText}>Editar</Text>
                   </TouchableOpacity>
@@ -218,6 +290,56 @@ const Calendario = () => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
+
+      <Modal
+  visible={modalEditarVisible}
+  transparent
+  animationType="fade"
+  onRequestClose={() => setModalEditarVisible(false)}
+>
+  <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+    <View style={styles.modalBackground}>
+      <View style={styles.modalContainer}>
+        <Text style={styles.title}>Editar Consulta</Text>
+
+       <Text style={styles.label}>Data</Text>
+<TextInput
+  style={styles.textInput}
+  placeholder="DD/MM/AAAA"
+  value={novaData}
+  keyboardType="numeric"
+  onChangeText={(text) => setNovaData(aplicarMascaraData(text))}
+/>
+
+<Text style={styles.label}>Hora</Text>
+<TextInput
+  style={styles.textInput}
+  placeholder="HH:MM"
+  value={novaHora}
+  keyboardType="numeric"
+  onChangeText={(text) => setNovaHora(aplicarMascaraHora(text))}
+/>
+
+        <View style={styles.buttonsRow}>
+          <TouchableOpacity
+            style={[styles.button, styles.cancelButton]}
+            onPress={() => setModalEditarVisible(false)}
+          >
+            <Text style={styles.cancelText}>Cancelar</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.button, styles.confirmButton]}
+            onPress={salvarEdicao}
+          >
+            <Text style={styles.confirmText}>Concluir</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  </TouchableWithoutFeedback>
+</Modal>
+
     </Layout>
   );
 };
