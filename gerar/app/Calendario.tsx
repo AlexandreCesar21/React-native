@@ -8,6 +8,9 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  Modal,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Feather';
@@ -18,6 +21,12 @@ const Calendario = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [agendamentos, setAgendamentos] = useState<any[]>([]);
+
+  // Estados para o modal de cancelamento
+  const [modalCancelVisible, setModalCancelVisible] = useState(false);
+  const [consultaSelecionadaIndex, setConsultaSelecionadaIndex] = useState<number | null>(null);
+  const [motivoCancelamento, setMotivoCancelamento] = useState('');
+
   const router = useRouter();
 
   useFocusEffect(
@@ -39,38 +48,53 @@ const Calendario = () => {
     }, [])
   );
 
-  const handleCancelarConsulta = (index: number) => {
-    Alert.alert(
-      'Cancelar consulta',
-      'Tem certeza que deseja cancelar esta consulta?',
-      [
-        { text: 'Não', style: 'cancel' },
-        {
-          text: 'Sim',
-          onPress: async () => {
-            try {
-              const novaLista = [...agendamentos];
-              novaLista.splice(index, 1);
-              await AsyncStorage.setItem('agendamentos', JSON.stringify(novaLista));
-              setAgendamentos(novaLista);
-              setExpandedIndex(null);
-            } catch (error) {
-              console.error('Erro ao cancelar consulta:', error);
-            }
-          },
-        },
-      ],
-      { cancelable: false }
-    );
+  const toggleExpand = (index: number) => {
+    setExpandedIndex(expandedIndex === index ? null : index);
+  };
+
+  // Abrir modal e setar consulta selecionada
+  const abrirModalCancelar = (index: number) => {
+    setConsultaSelecionadaIndex(index);
+    setModalCancelVisible(true);
+    setMotivoCancelamento('');
+  };
+
+  // Confirmar cancelamento
+  const confirmarCancelamento = async () => {
+    if (!motivoCancelamento.trim()) {
+      Alert.alert('Aviso', 'Por favor, digite o motivo do cancelamento.');
+      return;
+    }
+
+    if (consultaSelecionadaIndex === null) return;
+
+    try {
+      const novaLista = [...agendamentos];
+      // Aqui você pode usar o motivoCancelamento para algo (ex: salvar log), se quiser
+      novaLista.splice(consultaSelecionadaIndex, 1);
+      await AsyncStorage.setItem('agendamentos', JSON.stringify(novaLista));
+      setAgendamentos(novaLista);
+      setModalCancelVisible(false);
+      setConsultaSelecionadaIndex(null);
+      setExpandedIndex(null);
+      setMotivoCancelamento('');
+    } catch (error) {
+      console.error('Erro ao cancelar consulta:', error);
+    }
+  };
+
+  // Cancelar e fechar modal
+  const fecharModalCancelar = () => {
+    setModalCancelVisible(false);
+    setConsultaSelecionadaIndex(null);
+    setMotivoCancelamento('');
   };
 
   const filteredAgendamentos = agendamentos.filter((agendamento) =>
     agendamento.medico.nome.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const toggleExpand = (index: number) => {
-    setExpandedIndex(expandedIndex === index ? null : index);
-  };
+  const consultaSelecionada = consultaSelecionadaIndex !== null ? agendamentos[consultaSelecionadaIndex] : null;
 
   return (
     <Layout>
@@ -113,12 +137,20 @@ const Calendario = () => {
                 <View style={styles.line} />
 
                 <View style={styles.optionsContainer}>
-                  <TouchableOpacity style={styles.optionButton}>
-                    <Text style={styles.optionText}>Editar</Text>
-                  </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.optionButton}
-                    onPress={() => handleCancelarConsulta(index)}
+                    onPress={() => {
+                      // Aqui você pode chamar a função para editar (depois)
+                      // Por enquanto só deixei o placeholder
+                      // router.push(`/editar-consulta/${index}`) por exemplo
+                    }}
+                  >
+                    <Text style={styles.optionText}>Editar</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.optionButton}
+                    onPress={() => abrirModalCancelar(index)}
                   >
                     <Text style={styles.optionText}>Cancelar consulta</Text>
                   </TouchableOpacity>
@@ -128,6 +160,55 @@ const Calendario = () => {
           </View>
         ))}
       </ScrollView>
+
+      {/* Modal Cancelar Consulta */}
+      <Modal visible={modalCancelVisible} transparent animationType="fade" onRequestClose={fecharModalCancelar}>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={styles.modalBackground}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.title}>Deseja cancelar esta consulta?</Text>
+
+              {consultaSelecionada && (
+                <>
+                  <Text style={styles.infoText}>
+                    {consultaSelecionada.data} às {consultaSelecionada.hora}
+                  </Text>
+                  <Text style={styles.infoText}>DR {consultaSelecionada.medico.nome}</Text>
+                  <Text style={styles.infoText}>{consultaSelecionada.medico.especialidade}</Text>
+
+                  <View style={{ marginTop: 10 }} />
+
+                  <Text style={styles.infoText}>{consultaSelecionada.paciente.nome}</Text>
+                  <Text style={styles.infoText}>Paciente</Text>
+                </>
+              )}
+
+              <Text style={[styles.label, { marginTop: 20 }]}>
+                Digite abaixo o motivo do cancelamento
+              </Text>
+
+              <TextInput
+                style={styles.textInput}
+                multiline
+                numberOfLines={3}
+                placeholder="Motivo do cancelamento"
+                value={motivoCancelamento}
+                onChangeText={setMotivoCancelamento}
+              />
+
+              <View style={styles.buttonsRow}>
+                <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={fecharModalCancelar}>
+                  <Text style={styles.cancelText}>Voltar</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={[styles.button, styles.confirmButton]} onPress={confirmarCancelamento}>
+                  <Text style={styles.confirmText}>Confirmar cancelamento</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </Layout>
   );
 };
@@ -207,6 +288,71 @@ const styles = StyleSheet.create({
   optionText: {
     color: '#0B3B60',
     fontSize: 14,
+  },
+  // Modal styles
+  modalBackground: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+  },
+  modalContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+    elevation: 10,
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    color: '#00213D',
+    textAlign: 'center',
+  },
+  infoText: {
+    fontSize: 16,
+    color: '#333',
+    textAlign: 'center',
+  },
+  label: {
+    fontSize: 16,
+    color: '#333',
+  },
+  textInput: {
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginTop: 10,
+    padding: 10,
+    fontSize: 16,
+    textAlignVertical: 'top',
+  },
+  buttonsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  button: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 5,
+    marginHorizontal: 5,
+  },
+  cancelButton: {
+    backgroundColor: '#ccc',
+  },
+  confirmButton: {
+    backgroundColor: '#0B3B60',
+  },
+  cancelText: {
+    color: '#555',
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  confirmText: {
+    color: '#fff',
+    fontSize: 16,
+    textAlign: 'center',
   },
 });
 
