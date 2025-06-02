@@ -82,6 +82,47 @@ const salvarMedico = async () => {
   }
 };
 
+const aplicarMascaraTelefone = (valor: string) => {
+  valor = valor.replace(/\D/g, '').slice(0, 11);
+
+  if (valor.length <= 2) {
+    return `(${valor}`;
+  } 
+  if (valor.length <= 6) {
+    return `(${valor.slice(0, 2)}) ${valor.slice(2)}`;
+  } 
+  if (valor.length <= 10) {
+    return `(${valor.slice(0, 2)}) ${valor.slice(2, 6)}-${valor.slice(6)}`;
+  } 
+  return `(${valor.slice(0, 2)}) ${valor.slice(2, 7)}-${valor.slice(7)}`;
+};
+
+const aplicarMascaraCEP = (valor: string) => {
+  valor = valor.replace(/\D/g, '').slice(0, 8);
+
+  if (valor.length <= 5) {
+    return valor;
+  }
+
+  return `${valor.slice(0,5)}-${valor.slice(5)}`;
+};
+
+const aplicarMascaraCRM = (valor: string) => {
+  // Remove tudo que não for número e limita até 6 caracteres
+  return valor.replace(/\D/g, '').slice(0, 6);
+};
+
+const aplicarMascaraCNS = (valor: string) => {
+  // Remove tudo que não for número
+  valor = valor.replace(/\D/g, '').slice(0, 12); // Limita a 12 dígitos
+
+  if (valor.length <= 3) return valor;
+  if (valor.length <= 7) return `${valor.slice(0,3)} ${valor.slice(3)}`;
+  if (valor.length <= 11) return `${valor.slice(0,3)} ${valor.slice(3,7)} ${valor.slice(7)}`;
+  return `${valor.slice(0,3)} ${valor.slice(3,7)} ${valor.slice(7,11)} ${valor.slice(11)}`;
+};
+
+
   return (
       <View style={styles.container}>
         <ScrollView>
@@ -109,17 +150,21 @@ const salvarMedico = async () => {
             </View>
 
             <TextInput
-              style={styles.input}
-              placeholder="CRM"
-              value={crm}
-              onChangeText={setCrm}
-            />
-            <TextInput
-              style={styles.input}
-              placeholder="CNS"
-              value={cns}
-              onChangeText={setCns}
-            />
+  style={styles.input}
+  placeholder="CRM"
+  keyboardType="numeric"
+  value={crm}
+  onChangeText={(text) => setCrm(aplicarMascaraCRM(text))}
+/>
+
+<TextInput
+  style={styles.input}
+  placeholder="CNS"
+  keyboardType="numeric"
+  value={cns}
+  onChangeText={(text) => setCns(aplicarMascaraCNS(text))}
+/>
+
           </View>
 
           {/* Seção Contatos */}
@@ -135,8 +180,10 @@ const salvarMedico = async () => {
               style={styles.input}
               placeholder="Telefone ou Celular"
               value={telefone}
-              onChangeText={setTelefone}
+              keyboardType="phone-pad"
+              onChangeText={(text) => setTelefone(aplicarMascaraTelefone(text))}
             />
+
           </View>
 
           {/* Seção Endereço Profissional */}
@@ -179,8 +226,10 @@ const salvarMedico = async () => {
                 style={[styles.input, styles.halfWidth]}
                 placeholder="CEP"
                 value={cep}
-                onChangeText={setCep}
+                keyboardType="numeric"
+                onChangeText={(text) => setCep(aplicarMascaraCEP(text))}
               />
+
             </View>
           </View>
 
