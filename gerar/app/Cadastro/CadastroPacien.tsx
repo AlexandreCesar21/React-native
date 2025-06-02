@@ -100,80 +100,103 @@ const Paciente = () => {
           <Text style={styles.sectionTitle}>Endereço</Text>
           <TextInput style={styles.input} placeholder="Logradouro" value={logradouro} onChangeText={setLogradouro} />
           <View style={styles.row}>
-            <TextInput style={[styles.input, styles.halfInput]} placeholder="Número" value={numero} onChangeText={setNumero} />
-            <TextInput style={[styles.input, styles.halfInput]} placeholder="Complemento" value={complemento} onChangeText={setComplemento} />
+            <TextInput style={[styles.input, styles.halfWidth]} placeholder="Número" value={numero} onChangeText={setNumero} />
+            <TextInput style={[styles.input, styles.halfWidth]} placeholder="Complemento" value={complemento} onChangeText={setComplemento} />
           </View>
           <TextInput style={styles.input} placeholder="Cidade" value={cidade} onChangeText={setCidade} />
           <View style={styles.row}>
-            <TextInput style={[styles.input, styles.halfInput]} placeholder="UF" value={uf} onChangeText={setUf} />
-            <TextInput style={[styles.input, styles.halfInput]} placeholder="CEP" value={cep} onChangeText={setCep} />
+            <TextInput style={[styles.input, styles.halfWidth]} placeholder="UF" value={uf} onChangeText={setUf} />
+            <TextInput style={[styles.input, styles.halfWidth]} placeholder="CEP" value={cep} onChangeText={setCep} />
           </View>
         </View>
 
         {/* Botões */}
-        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Concluir Cadastro</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={handleCancel}>
-          <Text style={styles.cancelButtonText}>Cancelar</Text>
-        </TouchableOpacity>
+       <TouchableOpacity style={[styles.fixedButton, styles.concluirButton]} onPress={handleSubmit}>
+               <Text style={styles.buttonText}>Concluir cadastro</Text>
+             </TouchableOpacity>
+       
+             <TouchableOpacity style={[styles.fixedButton, styles.cancelarButton]} onPress={handleCancel}>
+               <Text style={styles.buttonText2}>Cancelar</Text>
+             </TouchableOpacity>
       </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+   container: {
     flex: 1,
-    backgroundColor: '#F6F8FA',
-  },
-  scrollContainer: {
     padding: 20,
+    backgroundColor: '#f5f5f5',
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
   },
   section: {
-    marginBottom: 25,
+    marginBottom: 20,  // Aumentando a margem entre as seções
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#0B3B60',
-    marginBottom: 10,
+    marginBottom: 10,  // Aumentando o espaço entre o título e os campos
+    color: "#0B3B60",
   },
   input: {
-    backgroundColor: '#fff',
-    padding: 12,
-    borderRadius: 8,
+    height: 40,  // Aumentando um pouco a altura dos campos de input
+    borderColor: 'black',
     borderWidth: 1,
-    borderColor: '#ddd',
-    marginBottom: 10,
+    borderRadius: 5,
+    marginBottom: 12,  // Aumentando o espaço entre os campos
+    paddingLeft: 10,
+    fontSize: 16,  // Aumentando o tamanho da fonte para maior legibilidade
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  halfInput: {
+  halfWidth: {
     width: '48%',
   },
-  button: {
-    backgroundColor: '#0B3B60',
-    padding: 15,
-    borderRadius: 8,
-    marginTop: 10,
+  pickerWrapper: {
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 5,
+    marginBottom: 12,  // Aumentando o espaço entre o picker e o próximo campo
   },
-  cancelButton: {
-    backgroundColor: '#ccc',
+
+
+ fixedButton: {
+    paddingVertical: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderTopWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5, 
+    marginBottom: 10,
+    width: '90%', 
+    alignSelf: 'center', 
+  },
+  concluirButton: {
+    backgroundColor: '#0B3B60', 
+  },
+  cancelarButton: {
+    backgroundColor: '#fff', 
+    borderWidth: 2, 
+    borderColor: '#0B3B60', 
   },
   buttonText: {
     color: '#fff',
+    fontSize: 18,
     fontWeight: 'bold',
-    textAlign: 'center',
   },
-  cancelButtonText: {
-    color: '#333',
+  buttonText2: {
+    color: '#0B3B60',
     fontWeight: 'bold',
-    textAlign: 'center',
-  },
+    fontSize: 18,
+  }
 });
 
 export default Paciente;

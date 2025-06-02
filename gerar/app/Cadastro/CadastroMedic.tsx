@@ -122,7 +122,12 @@ const aplicarMascaraCNS = (valor: string) => {
   return `${valor.slice(0,3)} ${valor.slice(3,7)} ${valor.slice(7,11)} ${valor.slice(11)}`;
 };
 
-
+const aplicarMascaraUF = (valor: string) => {
+  return valor
+    .toUpperCase()           // deixa maiúsculo
+    .replace(/[^A-Z]/g, '')  // remove caracteres que não são letras A-Z
+    .slice(0, 2);            // limita a 2 caracteres
+};
   return (
       <View style={styles.container}>
         <ScrollView>
@@ -217,11 +222,11 @@ const aplicarMascaraCNS = (valor: string) => {
             />
             <View style={styles.row}>
               <TextInput
-                style={[styles.input, styles.halfWidth]}
-                placeholder="UF"
-                value={uf}
-                onChangeText={setUf}
-              />
+              style={[styles.input, styles.halfWidth]}
+              placeholder="UF"
+              value={uf}
+              onChangeText={(text) => setUf(aplicarMascaraUF(text))}
+            />
               <TextInput
                 style={[styles.input, styles.halfWidth]}
                 placeholder="CEP"

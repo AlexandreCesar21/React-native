@@ -58,6 +58,53 @@ const CadastroFuncion = () => {
     router.back();
   };
 
+  const formatCpf = (value) => {
+    return value
+      .replace(/\D/g, '')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+  };
+
+  const formatRg = (value) => {
+    return value
+      .replace(/\D/g, '')
+      .replace(/(\d{2})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1})$/, '$1-$2');
+  };
+
+  const formatTelefone = (value) => {
+    return value
+      .replace(/\D/g, '')
+      .replace(/^(\d{2})(\d)/, '($1) $2')
+      .replace(/(\d{5})(\d)/, '$1-$2')
+      .slice(0, 15);
+  };
+
+  const formatCep = (value) => {
+    return value
+      .replace(/\D/g, '')
+      .replace(/(\d{5})(\d)/, '$1-$2')
+      .slice(0, 9);
+  };
+
+  const formatData = (value) => {
+  return value
+    .replace(/\D/g, '')                    // só números
+    .replace(/(\d{2})(\d)/, '$1/$2')      // insere barra após dia
+    .replace(/(\d{2})\/(\d{2})(\d)/, '$1/$2/$3')  // insere barra após mês
+    .slice(0, 10);                        // máximo 10 chars
+};
+
+// UF: só letras, maiúsculas, max 2 caracteres
+const formatUf = (value) => {
+  return value
+    .replace(/[^a-zA-Z]/g, '')            // só letras
+    .toUpperCase()
+    .slice(0, 2);
+};
+
   return (
     
       <View style={styles.container}>
@@ -76,9 +123,29 @@ const CadastroFuncion = () => {
               </Picker>
             </View>
 
-            <TextInput style={styles.input} placeholder="RG" value={rg} onChangeText={setRg} />
-            <TextInput style={styles.input} placeholder="CPF" value={cpf} onChangeText={setCpf} />
-            <TextInput style={styles.input} placeholder="Data de nascimento" value={data} onChangeText={setData} />
+          <TextInput
+            style={styles.input}
+            placeholder="RG"
+            value={rg}
+            onChangeText={(text) => setRg(formatRg(text))}
+            maxLength={12}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="CPF"
+            value={cpf}
+            onChangeText={(text) => setCpf(formatCpf(text))}
+            maxLength={14}
+          />
+
+          <TextInput
+            style={styles.input}
+            placeholder="Data de nascimento"
+            value={data}
+            onChangeText={(text) => setData(formatData(text))}
+            keyboardType="numeric"
+            maxLength={10}
+          />
           </View>
 
           <Text style={styles.label}>Gênero</Text>
@@ -101,13 +168,13 @@ const CadastroFuncion = () => {
               keyboardType="email-address"
               autoCapitalize="none"
             />
-            <TextInput
-              style={styles.input}
-              placeholder="Telefone ou Celular"
-              value={telefone}
-              onChangeText={setTelefone}
-              keyboardType="phone-pad"
-            />
+             <TextInput
+                style={styles.input}
+                placeholder="Telefone ou Celular"
+                value={telefone}
+                onChangeText={(text) => setTelefone(formatTelefone(text))}
+                keyboardType="phone-pad"
+              />
           </View>
 
           <View style={styles.section}>
@@ -119,8 +186,21 @@ const CadastroFuncion = () => {
             </View>
             <TextInput style={styles.input} placeholder="Cidade" value={cidade} onChangeText={setCidade} />
             <View style={styles.row}>
-              <TextInput style={[styles.input, styles.halfWidth]} placeholder="UF" value={uf} onChangeText={setUf} />
-              <TextInput style={[styles.input, styles.halfWidth]} placeholder="CEP" value={cep} onChangeText={setCep} keyboardType="numeric" />
+              <TextInput
+              style={[styles.input, styles.halfWidth]}
+              placeholder="UF"
+              value={uf}
+              onChangeText={(text) => setUf(formatUf(text))}
+              maxLength={2}
+            />
+          <TextInput
+            style={[styles.input, styles.halfWidth]}
+            placeholder="CEP"
+            value={cep}
+            onChangeText={(text) => setCep(formatCep(text))}
+            keyboardType="numeric"
+            maxLength={9}
+          />
             </View>
           </View>
 
