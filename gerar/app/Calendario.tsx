@@ -1,63 +1,75 @@
-import React, { useState } from 'react';
-import { Text, StyleSheet, View, TextInput, Image, ScrollView, TouchableOpacity } from 'react-native';
-import Layout from '@/components/layout_consulta';
+import React, { useState, useCallback } from 'react';
+import {
+  Text,
+  StyleSheet,
+  View,
+  TextInput,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Feather';
+import { useFocusEffect, useRouter } from 'expo-router';
+import Layout from '@/components/layout_consulta';
 
 const Calendario = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [expandedMedico, setExpandedMedico] = useState<number | null>(null);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+  const [agendamentos, setAgendamentos] = useState<any[]>([]);
+  const router = useRouter();
 
-  const handleSearchChange = (text: string) => {
-    setSearchQuery(text);
-  };
+  useFocusEffect(
+    useCallback(() => {
+      const carregarAgendamentos = async () => {
+        try {
+          const data = await AsyncStorage.getItem('agendamentos');
+          if (data) {
+            setAgendamentos(JSON.parse(data));
+          } else {
+            setAgendamentos([]);
+          }
+        } catch (error) {
+          console.error('Erro ao carregar agendamentos:', error);
+        }
+      };
 
-  const handleToggleExpand = (index: number) => {
-    setExpandedMedico(expandedMedico === index ? null : index);
-  };
+      carregarAgendamentos();
+    }, [])
+  );
 
-  const agendamentos = [
-    {
-      data: '26/03/2025',
-      hora: '9h00',
-      medico: {
-        nome: 'Adriano Moreira Sales',
-        especialidade: 'Ginecologista',
-        crm: 'CRM 15.879-SP',
-      },
-      paciente: {
-        nome: 'Marcela Trindade',
-      },
-    },
-    {
-      data: '26/03/2025',
-      hora: '9h00',
-      medico: {
-        nome: 'Bernardo Oliveira',
-        especialidade: 'Pediatra',
-        crm: 'CRM 15.879-SP',
-      },
-      paciente: {
-        nome: 'Carlos Eduardo de Oliveira',
-      },
-    },
-    {
-      data: '28/03/2025',
-      hora: '10h00',
-      medico: {
-        nome: 'Amanda Siqueira',
-        especialidade: 'Dermatologista',
-        crm: 'CRM 22.879-SP',
-      },
-      paciente: {
-        nome: 'Luciana Costa',
-      },
-    },
-  ];
-
-  const filterAgendamentos = () => {
-    return agendamentos.filter((agendamento) =>
-      agendamento.medico.nome.toLowerCase().includes(searchQuery.toLowerCase())
+  const handleCancelarConsulta = (index: number) => {
+    Alert.alert(
+      'Cancelar consulta',
+      'Tem certeza que deseja cancelar esta consulta?',
+      [
+        { text: 'Não', style: 'cancel' },
+        {
+          text: 'Sim',
+          onPress: async () => {
+            try {
+              const novaLista = [...agendamentos];
+              novaLista.splice(index, 1);
+              await AsyncStorage.setItem('agendamentos', JSON.stringify(novaLista));
+              setAgendamentos(novaLista);
+              setExpandedIndex(null);
+            } catch (error) {
+              console.error('Erro ao cancelar consulta:', error);
+            }
+          },
+        },
+      ],
+      { cancelable: false }
     );
+  };
+
+  const filteredAgendamentos = agendamentos.filter((agendamento) =>
+    agendamento.medico.nome.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const toggleExpand = (index: number) => {
+    setExpandedIndex(expandedIndex === index ? null : index);
   };
 
   return (
@@ -67,13 +79,13 @@ const Calendario = () => {
           style={styles.searchInput}
           placeholder="Pesquisar médico"
           value={searchQuery}
-          onChangeText={handleSearchChange}
+          onChangeText={setSearchQuery}
         />
         <Image source={require('../assets/images/lupa.png')} style={styles.searchIcon} />
       </View>
 
       <ScrollView style={styles.scrollContainer}>
-        {filterAgendamentos().map((agendamento, index) => (
+        {filteredAgendamentos.map((agendamento, index) => (
           <View key={index} style={styles.medicoContainer}>
             <View style={styles.medicoHeader}>
               <Text style={styles.medicoData}>{agendamento.data}</Text>
@@ -81,31 +93,37 @@ const Calendario = () => {
 
             <View style={styles.medicoHeader}>
               <Text style={styles.medicoName}>{agendamento.hora}</Text>
-              <TouchableOpacity
-                style={styles.arrowContainer}
-                onPress={() => handleToggleExpand(index)}
-              >
-                <Icon name={expandedMedico === index ? 'chevron-down' : 'chevron-right'} size={24} color="#007BFF" />
+              <TouchableOpacity onPress={() => toggleExpand(index)} style={styles.arrowContainer}>
+                <Icon
+                  name={expandedIndex === index ? 'chevron-down' : 'chevron-right'}
+                  size={24}
+                  color="#007BFF"
+                />
               </TouchableOpacity>
             </View>
 
-            {expandedMedico === index && (
-              <View style={styles.medicoContainer}>
+            {expandedIndex === index && (
+              <View>
                 <Text style={styles.medicoInfo}>{agendamento.medico.nome}</Text>
-                <Text style={styles.medicoInfo}>{agendamento.medico.especialidade} | {agendamento.medico.crm}</Text>
+                <Text style={styles.medicoInfo}>
+                  {agendamento.medico.especialidade} | {agendamento.medico.crm}
+                </Text>
                 <Text style={styles.medicoInfo}>{agendamento.paciente.nome}</Text>
                 <Text style={styles.medicoInfo}>Paciente</Text>
                 <View style={styles.line} />
 
-                <View style={styles.optionsContainer } >
-                        <TouchableOpacity style={styles.optionButton}>
-                            <Text style={styles.optionText}>Editar</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.optionButton}>
-                            <Text style={styles.optionText}>Cancelar consulta</Text>
-                        </TouchableOpacity>
-                    </View>
+                <View style={styles.optionsContainer}>
+                  <TouchableOpacity style={styles.optionButton}>
+                    <Text style={styles.optionText}>Editar</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.optionButton}
+                    onPress={() => handleCancelarConsulta(index)}
+                  >
+                    <Text style={styles.optionText}>Cancelar consulta</Text>
+                  </TouchableOpacity>
                 </View>
+              </View>
             )}
           </View>
         ))}
@@ -160,12 +178,9 @@ const styles = StyleSheet.create({
     color: '#555',
   },
   medicoData: {
-    fontSize: 20, 
-    color: '#339CFF', 
+    fontSize: 20,
+    color: '#339CFF',
     fontWeight: 'bold',
-  },
-  medicoDetails: {
-    marginTop: 10,
   },
   line: {
     borderBottomWidth: 1,
@@ -175,40 +190,24 @@ const styles = StyleSheet.create({
   arrowContainer: {
     marginLeft: 10,
   },
-  buttonsContainer: {
-    flexDirection: 'row',
-    marginTop: 10,
-    justifyContent: 'space-between',
-  },
-  button: {
-    backgroundColor: '#007BFF',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 14,
-  },
   optionsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginTop: 10,
   },
   optionButton: {
-    backgroundColor: '#fff', 
+    backgroundColor: '#fff',
     paddingVertical: 5,
     paddingHorizontal: 15,
     borderRadius: 5,
-    marginHorizontal: 5, 
-    borderWidth: 2, 
-    borderColor: '#0B3B60', 
-
+    marginHorizontal: 5,
+    borderWidth: 2,
+    borderColor: '#0B3B60',
   },
   optionText: {
-    color: '#0B3B60', 
+    color: '#0B3B60',
     fontSize: 14,
-  }
+  },
 });
 
 export default Calendario;
