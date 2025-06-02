@@ -22,7 +22,7 @@ const Calendario = () => {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [agendamentos, setAgendamentos] = useState<any[]>([]);
 
-  // Estados para o modal de cancelamento
+  // Modal states
   const [modalCancelVisible, setModalCancelVisible] = useState(false);
   const [consultaSelecionadaIndex, setConsultaSelecionadaIndex] = useState<number | null>(null);
   const [motivoCancelamento, setMotivoCancelamento] = useState('');
@@ -52,14 +52,12 @@ const Calendario = () => {
     setExpandedIndex(expandedIndex === index ? null : index);
   };
 
-  // Abrir modal e setar consulta selecionada
   const abrirModalCancelar = (index: number) => {
     setConsultaSelecionadaIndex(index);
     setModalCancelVisible(true);
     setMotivoCancelamento('');
   };
 
-  // Confirmar cancelamento
   const confirmarCancelamento = async () => {
     if (!motivoCancelamento.trim()) {
       Alert.alert('Aviso', 'Por favor, digite o motivo do cancelamento.');
@@ -70,7 +68,6 @@ const Calendario = () => {
 
     try {
       const novaLista = [...agendamentos];
-      // Aqui você pode usar o motivoCancelamento para algo (ex: salvar log), se quiser
       novaLista.splice(consultaSelecionadaIndex, 1);
       await AsyncStorage.setItem('agendamentos', JSON.stringify(novaLista));
       setAgendamentos(novaLista);
@@ -83,7 +80,6 @@ const Calendario = () => {
     }
   };
 
-  // Cancelar e fechar modal
   const fecharModalCancelar = () => {
     setModalCancelVisible(false);
     setConsultaSelecionadaIndex(null);
@@ -104,6 +100,7 @@ const Calendario = () => {
           placeholder="Pesquisar médico"
           value={searchQuery}
           onChangeText={setSearchQuery}
+          placeholderTextColor="#999"
         />
         <Image source={require('../assets/images/lupa.png')} style={styles.searchIcon} />
       </View>
@@ -127,10 +124,10 @@ const Calendario = () => {
             </View>
 
             {expandedIndex === index && (
-              <View>
+              <View style={styles.detailsContainer}>
                 <Text style={styles.medicoInfo}>{agendamento.medico.nome}</Text>
                 <Text style={styles.medicoInfo}>
-                  {agendamento.medico.especialidade} | {agendamento.medico.crm}
+                  {agendamento.medico.especialidade1} | {agendamento.medico.crm}
                 </Text>
                 <Text style={styles.medicoInfo}>{agendamento.paciente.nome}</Text>
                 <Text style={styles.medicoInfo}>Paciente</Text>
@@ -140,9 +137,7 @@ const Calendario = () => {
                   <TouchableOpacity
                     style={styles.optionButton}
                     onPress={() => {
-                      // Aqui você pode chamar a função para editar (depois)
-                      // Por enquanto só deixei o placeholder
-                      // router.push(`/editar-consulta/${index}`) por exemplo
+                      // Placeholder para editar
                     }}
                   >
                     <Text style={styles.optionText}>Editar</Text>
@@ -162,47 +157,61 @@ const Calendario = () => {
       </ScrollView>
 
       {/* Modal Cancelar Consulta */}
-      <Modal visible={modalCancelVisible} transparent animationType="fade" onRequestClose={fecharModalCancelar}>
+      <Modal
+        visible={modalCancelVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={fecharModalCancelar}
+      >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View style={styles.modalBackground}>
             <View style={styles.modalContainer}>
-              <Text style={styles.title}>Deseja cancelar esta consulta?</Text>
+              <Text style={styles.title}>Cancelar Consulta</Text>
 
               {consultaSelecionada && (
-                <>
+                <View style={styles.consultaInfo}>
                   <Text style={styles.infoText}>
+                    <Text style={{ fontWeight: '600' }}>Data: </Text>
                     {consultaSelecionada.data} às {consultaSelecionada.hora}
                   </Text>
-                  <Text style={styles.infoText}>DR {consultaSelecionada.medico.nome}</Text>
-                  <Text style={styles.infoText}>{consultaSelecionada.medico.especialidade}</Text>
-
-                  <View style={{ marginTop: 10 }} />
-
-                  <Text style={styles.infoText}>{consultaSelecionada.paciente.nome}</Text>
-                  <Text style={styles.infoText}>Paciente</Text>
-                </>
+                  <Text style={styles.infoText}>
+                    <Text style={{ fontWeight: '600' }}>Médico: </Text>DR {consultaSelecionada.medico.nome}
+                  </Text>
+                  <Text style={styles.infoText}>
+                    <Text style={{ fontWeight: '600' }}>Especialidade: </Text>{consultaSelecionada.medico.especialidade1}
+                  </Text>
+                  <Text style={styles.infoText}>
+                    <Text style={{ fontWeight: '600' }}>Paciente: </Text>{consultaSelecionada.paciente.nome}
+                  </Text>
+                </View>
               )}
 
-              <Text style={[styles.label, { marginTop: 20 }]}>
-                Digite abaixo o motivo do cancelamento
-              </Text>
+              <Text style={styles.label}>Motivo do cancelamento</Text>
 
               <TextInput
                 style={styles.textInput}
                 multiline
-                numberOfLines={3}
-                placeholder="Motivo do cancelamento"
+                numberOfLines={4}
+                placeholder="Digite o motivo aqui..."
+                placeholderTextColor="#999"
                 value={motivoCancelamento}
                 onChangeText={setMotivoCancelamento}
+                textAlignVertical="top"
               />
 
               <View style={styles.buttonsRow}>
-                <TouchableOpacity style={[styles.button, styles.cancelButton]} onPress={fecharModalCancelar}>
+                <TouchableOpacity
+                  style={[styles.button, styles.cancelButton]}
+                  onPress={fecharModalCancelar}
+                >
                   <Text style={styles.cancelText}>Voltar</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={[styles.button, styles.confirmButton]} onPress={confirmarCancelamento}>
-                  <Text style={styles.confirmText}>Confirmar cancelamento</Text>
+                <TouchableOpacity
+                  style={[styles.button, styles.confirmButton]}
+                  onPress={confirmarCancelamento}
+                >
+                  <Text style={styles.confirmText}>Confirmar</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -222,51 +231,62 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     width: '100%',
-    height: 60,
+    height: 50,
     borderColor: '#ddd',
     borderWidth: 1,
-    borderRadius: 5,
-    paddingLeft: 10,
+    borderRadius: 8,
+    paddingLeft: 15,
     fontSize: 16,
+    backgroundColor: '#f9f9f9',
   },
   searchIcon: {
     position: 'absolute',
-    right: 30,
-    top: 30,
+    right: 25,
+    top: 27,
     width: 20,
     height: 20,
+    tintColor: '#999',
   },
   scrollContainer: {
     flex: 1,
     padding: 20,
   },
   medicoContainer: {
-    marginBottom: 15,
+    marginBottom: 18,
+    backgroundColor: '#fefefe',
+    padding: 15,
+    borderRadius: 8,
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 1 },
+    shadowRadius: 4,
+    elevation: 2,
   },
   medicoHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 5,
+    marginBottom: 8,
   },
   medicoName: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '700',
     color: '#00213D',
   },
   medicoInfo: {
-    fontSize: 14,
+    fontSize: 15,
     color: '#555',
+    marginVertical: 2,
   },
   medicoData: {
     fontSize: 20,
     color: '#339CFF',
-    fontWeight: 'bold',
+    fontWeight: '700',
   },
   line: {
     borderBottomWidth: 1,
     borderColor: '#ddd',
-    marginTop: 10,
+    marginVertical: 12,
   },
   arrowContainer: {
     marginLeft: 10,
@@ -274,84 +294,99 @@ const styles = StyleSheet.create({
   optionsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginTop: 10,
   },
   optionButton: {
     backgroundColor: '#fff',
-    paddingVertical: 5,
-    paddingHorizontal: 15,
-    borderRadius: 5,
+    paddingVertical: 8,
+    paddingHorizontal: 20,
+    borderRadius: 6,
     marginHorizontal: 5,
     borderWidth: 2,
     borderColor: '#0B3B60',
   },
   optionText: {
     color: '#0B3B60',
-    fontSize: 14,
+    fontSize: 15,
+    fontWeight: '600',
   },
+
   // Modal styles
   modalBackground: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(0,0,0,0.45)',
     justifyContent: 'center',
-    paddingHorizontal: 20,
+    paddingHorizontal: 25,
   },
   modalContainer: {
     backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 20,
-    elevation: 10,
+    borderRadius: 14,
+    paddingVertical: 25,
+    paddingHorizontal: 25,
+    elevation: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
   },
   title: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 15,
+    marginBottom: 20,
     color: '#00213D',
     textAlign: 'center',
   },
+  consultaInfo: {
+    marginBottom: 20,
+  },
   infoText: {
     fontSize: 16,
-    color: '#333',
-    textAlign: 'center',
+    color: '#444',
+    marginBottom: 6,
   },
   label: {
-    fontSize: 16,
+    fontSize: 17,
     color: '#333',
+    fontWeight: '600',
+    marginBottom: 8,
   },
   textInput: {
-    borderColor: '#ddd',
+    borderColor: '#bbb',
     borderWidth: 1,
-    borderRadius: 5,
-    marginTop: 10,
-    padding: 10,
+    borderRadius: 8,
+    padding: 12,
     fontSize: 16,
-    textAlignVertical: 'top',
+    backgroundColor: '#fafafa',
+    minHeight: 90,
+    maxHeight: 120,
   },
   buttonsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 20,
+    marginTop: 25,
   },
   button: {
     flex: 1,
-    paddingVertical: 12,
-    borderRadius: 5,
-    marginHorizontal: 5,
+    paddingVertical: 14,
+    borderRadius: 8,
+    marginHorizontal: 7,
+    justifyContent: 'center',
   },
   cancelButton: {
-    backgroundColor: '#ccc',
+    backgroundColor: '#eee',
   },
   confirmButton: {
     backgroundColor: '#0B3B60',
   },
   cancelText: {
-    color: '#555',
+    color: '#666',
     fontSize: 16,
+    fontWeight: '600',
     textAlign: 'center',
   },
   confirmText: {
     color: '#fff',
     fontSize: 16,
+    fontWeight: '600',
     textAlign: 'center',
   },
 });
