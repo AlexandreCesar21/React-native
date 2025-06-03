@@ -11,6 +11,54 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 
+const formatCpf = (value) => {
+  return value
+    .replace(/\D/g, '')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+};
+
+const formatRg = (value) => {
+  return value
+    .replace(/\D/g, '')
+    .replace(/(\d{2})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d)/, '$1.$2')
+    .replace(/(\d{3})(\d{1})$/, '$1-$2');
+};
+
+const formatTelefone = (value) => {
+  return value
+    .replace(/\D/g, '')
+    .replace(/^(\d{2})(\d)/, '($1) $2')
+    .replace(/(\d{5})(\d)/, '$1-$2')
+    .slice(0, 15);
+};
+
+const formatCep = (value) => {
+  return value
+    .replace(/\D/g, '')
+    .replace(/(\d{5})(\d)/, '$1-$2')
+    .slice(0, 9);
+};
+
+const formatData = (value) => {
+  return value
+    .replace(/\D/g, '')                    // só números
+    .replace(/(\d{2})(\d)/, '$1/$2')      // insere barra após dia
+    .replace(/(\d{2})\/(\d{2})(\d)/, '$1/$2/$3')  // insere barra após mês
+    .slice(0, 10);                        // máximo 10 chars
+};
+
+// UF: só letras, maiúsculas, max 2 caracteres
+const formatUf = (value) => {
+  return value
+    .replace(/[^a-zA-Z]/g, '')            // só letras
+    .toUpperCase()
+    .slice(0, 2);
+};
+
+
 const Paciente = () => {
   const router = useRouter();
 
@@ -80,18 +128,18 @@ const Paciente = () => {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Paciente</Text>
           <TextInput style={styles.input} placeholder="Nome Completo" value={nome} onChangeText={setNome} />
-          <TextInput style={styles.input} placeholder="CPF" value={cpf} onChangeText={setCpf} />
-          <TextInput style={styles.input} placeholder="RG" value={rg} onChangeText={setRg} />
-          <TextInput style={styles.input} placeholder="CNS" value={cns} onChangeText={setCns} />
+          <TextInput style={styles.input} placeholder="CPF" value={cpf} onChangeText={(text) => setCpf(formatCpf(text))} />
+          <TextInput style={styles.input} placeholder="RG" value={rg} onChangeText={(text) => setRg(formatRg(text))} />
+          <TextInput style={styles.input} placeholder="CNS" value={cns} onChangeText={(text) => setCns(formatCns(text))} />
           <TextInput style={styles.input} placeholder="Tipo Sanguíneo" value={sangue} onChangeText={setSangue} />
           <TextInput style={styles.input} placeholder="Nacionalidade" value={nacionalidade} onChangeText={setNacionalidade} />
-          <TextInput style={styles.input} placeholder="Data de Nascimento" value={data} onChangeText={setData} />
+          <TextInput style={styles.input} placeholder="Data de Nascimento" value={data} onChangeText={(text) => setData(formatData(text))} />
         </View>
 
         {/* Seção Contato */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Contatos</Text>
-          <TextInput style={styles.input} placeholder="Telefone ou Celular" value={telefone} onChangeText={setTelefone} />
+          <TextInput style={styles.input} placeholder="Telefone ou Celular" value={telefone} onChangeText={(text) => setTelefone(formatTelefone(text))} />
           <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} />
         </View>
 
@@ -105,19 +153,19 @@ const Paciente = () => {
           </View>
           <TextInput style={styles.input} placeholder="Cidade" value={cidade} onChangeText={setCidade} />
           <View style={styles.row}>
-            <TextInput style={[styles.input, styles.halfWidth]} placeholder="UF" value={uf} onChangeText={setUf} />
-            <TextInput style={[styles.input, styles.halfWidth]} placeholder="CEP" value={cep} onChangeText={setCep} />
+            <TextInput style={[styles.input, styles.halfWidth]} placeholder="UF" value={uf} onChangeText={(text) => setUf(formatUf(text))} />
+            <TextInput style={[styles.input, styles.halfWidth]} placeholder="CEP" value={cep} onChangeText={(text) => setCep(formatCep(text))} />
           </View>
         </View>
 
         {/* Botões */}
-       <TouchableOpacity style={[styles.fixedButton, styles.concluirButton]} onPress={handleSubmit}>
-               <Text style={styles.buttonText}>Concluir cadastro</Text>
-             </TouchableOpacity>
-       
-             <TouchableOpacity style={[styles.fixedButton, styles.cancelarButton]} onPress={handleCancel}>
-               <Text style={styles.buttonText2}>Cancelar</Text>
-             </TouchableOpacity>
+        <TouchableOpacity style={[styles.fixedButton, styles.concluirButton]} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>Concluir cadastro</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={[styles.fixedButton, styles.cancelarButton]} onPress={handleCancel}>
+          <Text style={styles.buttonText2}>Cancelar</Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
