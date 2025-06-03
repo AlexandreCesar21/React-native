@@ -22,6 +22,38 @@ const Funcionarios = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [funcionarioEditando, setFuncionarioEditando] = useState<any>(null);
 
+
+  const [modalExclusaoVisible, setModalExclusaoVisible] = useState(false);
+const [funcionarioParaExcluir, setFuncionarioParaExcluir] = useState<any>(null);
+
+// Desativa o funcionário (abre o modal de confirmação)
+const desativarFuncionario = (func: any) => {
+  setFuncionarioParaExcluir(func);
+  setModalExclusaoVisible(true);
+};
+
+
+const confirmarExclusao = async () => {
+  try {
+    const listaAtualizada = funcionarios.filter(
+      (item) => (item.id || item.nome) !== (funcionarioParaExcluir.id || funcionarioParaExcluir.nome)
+    );
+    await AsyncStorage.setItem('funcionarios', JSON.stringify(listaAtualizada));
+    setFuncionarios(listaAtualizada);
+    setModalExclusaoVisible(false);
+    setFuncionarioParaExcluir(null);
+    Alert.alert('Sucesso', `${funcionarioParaExcluir.nome} foi excluído com sucesso.`);
+  } catch (error) {
+    Alert.alert('Erro', 'Não foi possível excluir o funcionário.');
+  }
+};
+const abrirModalExclusao = (func: any) => {
+  setFuncionarioParaExcluir(func);
+  setModalExclusaoVisible(true);
+};
+
+
+
   // Carrega os funcionários
   useEffect(() => {
     const carregarFuncionarios = async () => {
@@ -46,33 +78,6 @@ const Funcionarios = () => {
   const handleToggleExpand = (index: number) => {
     setExpandedFuncionario(expandedFuncionario === index ? null : index);
   };
-
-  // Desativa o funcionário
-  const desativarFuncionario = (func: any) => {
-  Alert.alert(
-    'Excluir Perfil',
-    `Tem certeza que deseja excluir o funcionário ${func.nome}?`,
-    [
-      { text: 'Cancelar', style: 'cancel' },
-      {
-        text: 'Excluir',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            const listaAtualizada = funcionarios.filter(
-              (item) => (item.id || item.nome) !== (func.id || func.nome)
-            );
-            await AsyncStorage.setItem('funcionarios', JSON.stringify(listaAtualizada));
-            setFuncionarios(listaAtualizada);
-            Alert.alert('Sucesso', `${func.nome} foi excluído com sucesso.`);
-          } catch (error) {
-            Alert.alert('Erro', 'Não foi possível excluir o funcionário.');
-          }
-        },
-      },
-    ]
-  );
-};
 
 
   // Abre modal e preenche dados para edição
@@ -188,7 +193,8 @@ const Funcionarios = () => {
                       {!funcionario.desativado && (
                         <TouchableOpacity
                           style={styles.optionButton}
-                          onPress={() => desativarFuncionario(funcionario)}
+                          onPress={() => abrirModalExclusao(funcionario)}
+
                         >
                           <Text style={styles.optionText}>Desativar perfil</Text>
                         </TouchableOpacity>
@@ -273,6 +279,33 @@ const Funcionarios = () => {
   </View>
 </Modal>
 
+
+
+<Modal visible={modalExclusaoVisible} animationType="fade" transparent={true}>
+  <View style={styles.modalContainer}>
+    <View style={styles.modalContent}>
+      <Text style={styles.modalTitle}>Confirmar Exclusão</Text>
+      <Text style={{ marginBottom: 20 }}>
+        Tem certeza que deseja excluir o funcionário{' '}
+        <Text style={{ fontWeight: 'bold' }}>{funcionarioParaExcluir?.nome}</Text>?
+      </Text>
+      <View style={styles.modalButtons}>
+        <TouchableOpacity
+          style={[styles.optionButton]}
+          onPress={() => setModalExclusaoVisible(false)}
+        >
+          <Text style={styles.optionText}>Cancelar</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.optionButton]}
+          onPress={confirmarExclusao}
+        >
+          <Text style={styles.optionText}>Confirmar</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  </View>
+</Modal>
     </Layout>
   );
 };

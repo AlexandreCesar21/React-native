@@ -222,6 +222,7 @@ const salvarEdicao = async () => {
           </View>
         </View>
       </Modal>
+      
       <Modal
   visible={modalEditarVisible}
   animationType="slide"
