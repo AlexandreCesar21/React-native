@@ -44,16 +44,16 @@ const formatCep = (value) => {
 
 const formatData = (value) => {
   return value
-    .replace(/\D/g, '')                    // só números
-    .replace(/(\d{2})(\d)/, '$1/$2')      // insere barra após dia
-    .replace(/(\d{2})\/(\d{2})(\d)/, '$1/$2/$3')  // insere barra após mês
-    .slice(0, 10);                        // máximo 10 chars
+    .replace(/\D/g, '')                    
+    .replace(/(\d{2})(\d)/, '$1/$2')      
+    .replace(/(\d{2})\/(\d{2})(\d)/, '$1/$2/$3')  
+    .slice(0, 10);                       
 };
 
-// UF: só letras, maiúsculas, max 2 caracteres
+
 const formatUf = (value) => {
   return value
-    .replace(/[^a-zA-Z]/g, '')            // só letras
+    .replace(/[^a-zA-Z]/g, '')            
     .toUpperCase()
     .slice(0, 2);
 };
@@ -124,26 +124,24 @@ const Paciente = () => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* Seção Paciente */}
+   
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Paciente</Text>
           <TextInput style={styles.input} placeholder="Nome Completo" value={nome} onChangeText={setNome} />
           <TextInput style={styles.input} placeholder="CPF" value={cpf} onChangeText={(text) => setCpf(formatCpf(text))} />
           <TextInput style={styles.input} placeholder="RG" value={rg} onChangeText={(text) => setRg(formatRg(text))} />
-          <TextInput style={styles.input} placeholder="CNS" value={cns} onChangeText={(text) => setCns(formatCns(text))} />
           <TextInput style={styles.input} placeholder="Tipo Sanguíneo" value={sangue} onChangeText={setSangue} />
           <TextInput style={styles.input} placeholder="Nacionalidade" value={nacionalidade} onChangeText={setNacionalidade} />
           <TextInput style={styles.input} placeholder="Data de Nascimento" value={data} onChangeText={(text) => setData(formatData(text))} />
         </View>
 
-        {/* Seção Contato */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Contatos</Text>
           <TextInput style={styles.input} placeholder="Telefone ou Celular" value={telefone} onChangeText={(text) => setTelefone(formatTelefone(text))} />
           <TextInput style={styles.input} placeholder="Email" value={email} onChangeText={setEmail} />
         </View>
 
-        {/* Seção Endereço */}
+        
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Endereço</Text>
           <TextInput style={styles.input} placeholder="Logradouro" value={logradouro} onChangeText={setLogradouro} />
@@ -158,7 +156,7 @@ const Paciente = () => {
           </View>
         </View>
 
-        {/* Botões */}
+        
         <TouchableOpacity style={[styles.fixedButton, styles.concluirButton]} onPress={handleSubmit}>
           <Text style={styles.buttonText}>Concluir cadastro</Text>
         </TouchableOpacity>
@@ -184,22 +182,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   section: {
-    marginBottom: 20,  // Aumentando a margem entre as seções
+    marginBottom: 20,  
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,  // Aumentando o espaço entre o título e os campos
+    marginBottom: 10,  
     color: "#0B3B60",
   },
   input: {
-    height: 40,  // Aumentando um pouco a altura dos campos de input
+    height: 40,  
     borderColor: 'black',
     borderWidth: 1,
     borderRadius: 5,
-    marginBottom: 12,  // Aumentando o espaço entre os campos
+    marginBottom: 12, 
     paddingLeft: 10,
-    fontSize: 16,  // Aumentando o tamanho da fonte para maior legibilidade
+    fontSize: 16, 
   },
   row: {
     flexDirection: 'row',
@@ -212,7 +210,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'black',
     borderRadius: 5,
-    marginBottom: 12,  // Aumentando o espaço entre o picker e o próximo campo
+    marginBottom: 12,  
   },
 
 

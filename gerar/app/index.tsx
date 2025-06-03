@@ -18,12 +18,12 @@ export default function LoginScreen() {
   const [codigo, setCodigo] = useState('');
   const router = useRouter();
 
-  const usuarioCorreto = 'a';
-  const senhaCorreta = '1';
-  const codigoCorreta = '1';
+  const usuarioCorreto = 'user';
+  const senhaCorreta = '1234';
+  const codigoCorreta = '123';
 
   const handleLogin = () => {
-    // Aqui você pode validar o login, chamar API, etc.
+    
     if (email === '' || senha === '') {
       Alert.alert('Erro', 'Por favor, preencha todos os campos.');
       return;
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     width: 300,
     height: 300,
     marginBottom: 70,
-    marginTop: -120, // melhor que usar bottom
+    marginTop: -120,
     left: 15
   },
   input: {

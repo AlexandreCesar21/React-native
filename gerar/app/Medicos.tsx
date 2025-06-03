@@ -18,7 +18,7 @@ const ListaMedicos = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedMedico, setExpandedMedico] = useState<number | null>(null);
 
-  // Modal control states
+
   const [modalVisible, setModalVisible] = useState(false);
   const [medicoSelecionado, setMedicoSelecionado] = useState<any>(null);
 
@@ -27,7 +27,7 @@ const ListaMedicos = () => {
   
   const abrirModalEditar = (medico: any) => {
   setMedicoSelecionado(medico);
-  setDadosEditados({ ...medico }); // copia os dados atuais
+  setDadosEditados({ ...medico }); 
   setModalEditarVisible(true);
 };
 
@@ -72,24 +72,20 @@ const salvarEdicao = async () => {
     setExpandedMedico(expandedMedico === index ? null : index);
   };
 
-  // Abrir modal para desativar perfil
   const abrirModalDesativar = (medico: any) => {
     setMedicoSelecionado(medico);
     setModalVisible(true);
   };
 
-  // Fechar modal
   const fecharModal = () => {
     setModalVisible(false);
     setMedicoSelecionado(null);
   };
 
-  // Desativar perfil - função que "desativa" o médico (exemplo, remove da lista)
   const desativarPerfil = async () => {
     if (!medicoSelecionado) return;
 
     try {
-      // Exemplo simples: removendo o médico da lista
       const novaLista = medicos.filter(m => m.id !== medicoSelecionado.id);
       await AsyncStorage.setItem('medicos', JSON.stringify(novaLista));
       setMedicos(novaLista);
@@ -100,7 +96,6 @@ const salvarEdicao = async () => {
     }
   };
 
-  // Filtrar médicos pelo nome ou especialidade
   const medicosFiltrados = medicos
     .filter((medico: any) =>
       medico.nome.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -185,7 +180,6 @@ const salvarEdicao = async () => {
         ))}
       </ScrollView>
 
-      {/* Modal de confirmação */}
       <Modal
         visible={modalVisible}
         animationType="fade"
@@ -321,7 +315,7 @@ const styles = StyleSheet.create({
 },
   searchInput: {
   borderWidth: 2,
-  borderColor: '#007BFF', // Azul vibrante
+  borderColor: '#007BFF', 
   borderRadius: 8,
   padding: 10,
   marginBottom: 12,
@@ -412,10 +406,10 @@ searchInput: {
     fontWeight: 'bold',
   },
 
-  // Modal styles
+ 
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)', // Fundo semitransparente
+    backgroundColor: 'rgba(0,0,0,0.5)', 
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,

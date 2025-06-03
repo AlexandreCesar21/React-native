@@ -91,16 +91,16 @@ const CadastroFuncion = () => {
 
   const formatData = (value) => {
   return value
-    .replace(/\D/g, '')                    // só números
-    .replace(/(\d{2})(\d)/, '$1/$2')      // insere barra após dia
-    .replace(/(\d{2})\/(\d{2})(\d)/, '$1/$2/$3')  // insere barra após mês
-    .slice(0, 10);                        // máximo 10 chars
+    .replace(/\D/g, '')                    
+    .replace(/(\d{2})(\d)/, '$1/$2')      
+    .replace(/(\d{2})\/(\d{2})(\d)/, '$1/$2/$3')  
+    .slice(0, 10);                        
 };
 
-// UF: só letras, maiúsculas, max 2 caracteres
+
 const formatUf = (value) => {
   return value
-    .replace(/[^a-zA-Z]/g, '')            // só letras
+    .replace(/[^a-zA-Z]/g, '')            
     .toUpperCase()
     .slice(0, 2);
 };

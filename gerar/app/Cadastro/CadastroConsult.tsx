@@ -82,7 +82,6 @@ const CadastroConsult = () => {
     return;
   }
 
-  // Buscar dados completos dos médicos e pacientes salvos
   const dadosMedicos = await AsyncStorage.getItem('medicos');
   const dadosPacientes = await AsyncStorage.getItem('pacientes');
   const listaMedicos = dadosMedicos ? JSON.parse(dadosMedicos) : [];

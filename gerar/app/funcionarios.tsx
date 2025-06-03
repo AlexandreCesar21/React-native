@@ -26,7 +26,6 @@ const Funcionarios = () => {
   const [modalExclusaoVisible, setModalExclusaoVisible] = useState(false);
 const [funcionarioParaExcluir, setFuncionarioParaExcluir] = useState<any>(null);
 
-// Desativa o funcionário (abre o modal de confirmação)
 const desativarFuncionario = (func: any) => {
   setFuncionarioParaExcluir(func);
   setModalExclusaoVisible(true);
@@ -54,7 +53,6 @@ const abrirModalExclusao = (func: any) => {
 
 
 
-  // Carrega os funcionários
   useEffect(() => {
     const carregarFuncionarios = async () => {
       try {
@@ -69,29 +67,24 @@ const abrirModalExclusao = (func: any) => {
     carregarFuncionarios();
   }, []);
 
-  // Atualiza campo da pesquisa
   const handleSearchChange = (text: string) => {
     setSearchQuery(text);
   };
 
-  // Expande/oculta detalhes
   const handleToggleExpand = (index: number) => {
     setExpandedFuncionario(expandedFuncionario === index ? null : index);
   };
 
 
-  // Abre modal e preenche dados para edição
   const editarFuncionario = (func: any) => {
     setFuncionarioEditando({ ...func });
     setModalVisible(true);
   };
 
-  // Atualiza campo de edição
   const atualizarCampo = (campo: string, valor: string) => {
     setFuncionarioEditando({ ...funcionarioEditando, [campo]: valor });
   };
 
-  // Salva alterações
   const salvarEdicao = async () => {
     const listaAtualizada = funcionarios.map((item) =>
       (item.id || item.nome) === (funcionarioEditando.id || funcionarioEditando.nome)
@@ -109,14 +102,13 @@ const abrirModalExclusao = (func: any) => {
     }
   };
 
-  // Filtra e ordena
   const funcionariosFiltrados = funcionarios
     .filter((func) => func.nome.toLowerCase().includes(searchQuery.toLowerCase()))
     .sort((a, b) => a.nome.localeCompare(b.nome));
 
   return (
     <Layout>
-      {/* Campo de Pesquisa */}
+      
       <View style={styles.searchContainer}>
         <TextInput
           style={styles.searchInput}
@@ -127,7 +119,6 @@ const abrirModalExclusao = (func: any) => {
         <Image source={require('../assets/images/lupa.png')} style={styles.searchIcon} />
       </View>
 
-      {/* Lista de Funcionários */}
       <ScrollView style={styles.scrollContainer}>
         {funcionariosFiltrados.length === 0 ? (
           <Text style={{ textAlign: 'center', marginTop: 20 }}>
@@ -209,7 +200,7 @@ const abrirModalExclusao = (func: any) => {
         )}
       </ScrollView>
 
-      {/* Modal de Edição */}
+      
      <Modal visible={modalVisible} animationType="slide" transparent={true}>
   <View style={styles.modalContainer}>
     <View style={styles.modalContent}>

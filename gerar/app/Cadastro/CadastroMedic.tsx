@@ -108,13 +108,13 @@ const aplicarMascaraCEP = (valor: string) => {
 };
 
 const aplicarMascaraCRM = (valor: string) => {
-  // Remove tudo que não for número e limita até 6 caracteres
+  
   return valor.replace(/\D/g, '').slice(0, 6);
 };
 
 const aplicarMascaraCNS = (valor: string) => {
-  // Remove tudo que não for número
-  valor = valor.replace(/\D/g, '').slice(0, 12); // Limita a 12 dígitos
+ 
+  valor = valor.replace(/\D/g, '').slice(0, 12); 
 
   if (valor.length <= 3) return valor;
   if (valor.length <= 7) return `${valor.slice(0,3)} ${valor.slice(3)}`;
@@ -124,14 +124,14 @@ const aplicarMascaraCNS = (valor: string) => {
 
 const aplicarMascaraUF = (valor: string) => {
   return valor
-    .toUpperCase()           // deixa maiúsculo
-    .replace(/[^A-Z]/g, '')  // remove caracteres que não são letras A-Z
-    .slice(0, 2);            // limita a 2 caracteres
+    .toUpperCase()          
+    .replace(/[^A-Z]/g, '')  
+    .slice(0, 2);          
 };
   return (
       <View style={styles.container}>
         <ScrollView>
-          {/* Seção Profissional */}
+          
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Profissional</Text>
             <TextInput
@@ -172,7 +172,6 @@ const aplicarMascaraUF = (valor: string) => {
 
           </View>
 
-          {/* Seção Contatos */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Contatos</Text>
             <TextInput
@@ -191,7 +190,6 @@ const aplicarMascaraUF = (valor: string) => {
 
           </View>
 
-          {/* Seção Endereço Profissional */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Endereço Profissional</Text>
             <TextInput
@@ -238,7 +236,7 @@ const aplicarMascaraUF = (valor: string) => {
             </View>
           </View>
 
-          {/* Botão Salvar */}
+        
 
 
           

@@ -67,10 +67,10 @@ const salvarEdicao = async () => {
 };
 
 const aplicarMascaraData = (text: string) => {
-  // Remove tudo que não for número
+
   const cleaned = text.replace(/\D/g, '');
 
-  // Aplica a máscara DD/MM/AAAA
+  
   let masked = '';
   if (cleaned.length <= 2) {
     masked = cleaned;
@@ -84,10 +84,10 @@ const aplicarMascaraData = (text: string) => {
 };
 
 const aplicarMascaraHora = (text: string) => {
-  // Remove tudo que não for número
+  
   const cleaned = text.replace(/\D/g, '');
 
-  // Aplica a máscara HH:MM
+  
   let masked = '';
   if (cleaned.length <= 2) {
     masked = cleaned;
@@ -228,7 +228,6 @@ const aplicarMascaraHora = (text: string) => {
         ))}
       </ScrollView>
 
-      {/* Modal Cancelar Consulta */}
       <Modal
         visible={modalCancelVisible}
         transparent

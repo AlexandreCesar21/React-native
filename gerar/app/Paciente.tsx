@@ -163,12 +163,11 @@ const ListaPacientes = () => {
             ))}
       </ScrollView>
 
-      {/* Modal de Edição */}
       <Modal visible={modalVisible} transparent animationType="slide">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
   <Text style={styles.modalTitle}>Editar Paciente</Text>
-
+<Text style={styles.label}>Nome</Text>
   <TextInput
     style={styles.input}
     placeholder="Nome"
@@ -178,6 +177,7 @@ const ListaPacientes = () => {
     }
   />
 
+<Text style={styles.label}>Email</Text> 
   {pacienteEditando?.email !== undefined && (
     <TextInput
       style={styles.input}
@@ -188,7 +188,7 @@ const ListaPacientes = () => {
       }
     />
   )}
-
+  <Text style={styles.label}>Telefone</Text>
   {pacienteEditando?.telefone !== undefined && (
     <TextInput
       style={styles.input}
@@ -199,7 +199,7 @@ const ListaPacientes = () => {
       }
     />
   )}
-
+<Text style={styles.label}>Endereço</Text>
   {pacienteEditando?.logradouro !== undefined && (
     <TextInput
       style={styles.input}
@@ -210,7 +210,7 @@ const ListaPacientes = () => {
       }
     />
   )}
-
+<Text style={styles.label}>Número</Text>
   {pacienteEditando?.numero !== undefined && (
     <TextInput
       style={styles.input}
@@ -221,7 +221,7 @@ const ListaPacientes = () => {
       }
     />
   )}
-
+<Text style={styles.label}>Cidade</Text>
   {pacienteEditando?.cidade !== undefined && (
     <TextInput
       style={styles.input}
@@ -232,7 +232,7 @@ const ListaPacientes = () => {
       }
     />
   )}
-
+<Text style={styles.label}>CEP</Text>
   {pacienteEditando?.cep !== undefined && (
     <TextInput
       style={styles.input}
@@ -269,6 +269,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#ddd',
   },
+    label: {
+  fontSize: 14,
+  fontWeight: 'bold',
+  marginTop: 10,
+  marginBottom: 4,
+  color: '#0B3B60',
+},
   searchInput: {
     width: '100%',
     height: 60,
@@ -373,53 +380,3 @@ const styles = StyleSheet.create({
 });
 
 export default ListaPacientes;
-
-/*
-
-
- letras.map((letra) => (
-            <View key={letra} style={styles.letterSection}>
-              <Text style={styles.letterTitle}>{letra}</Text>
-              {pacientesFiltrados
-                .filter((paciente) => paciente.nome.toUpperCase().startsWith(letra))
-                .map((paciente) => (
-                  <View key={paciente.nome} style={styles.pacienteContainer}>
-                    <View style={styles.pacienteHeader}>
-                      <Text style={styles.pacienteName}>{paciente.nome}</Text>
-                      <TouchableOpacity
-                        style={styles.arrowContainer}
-                        onPress={() => handleToggleExpand(paciente.nome)}
-                      >
-                        <Icon
-                          name={expandedPacienteNome === paciente.nome ? 'chevron-down' : 'chevron-right'}
-                          size={24}
-                          color="#007BFF"
-                        />
-                      </TouchableOpacity>
-                    </View>
-                    <Text style={styles.pacienteInfo}>Sangue: {paciente.sangue}</Text>
-
-                    {expandedPacienteNome === paciente.nome && (
-                      <View style={styles.pacienteDetails}>
-                        {paciente.email && <Text style={styles.pacienteInfo}>Email: {paciente.email}</Text>}
-                        {paciente.numero && <Text style={styles.pacienteInfo}>Telefone: {paciente.numero}</Text>}
-                        {paciente.logradouro && <Text style={styles.pacienteInfo}>Endereço: {paciente.logradouro} N°{paciente.numero}</Text>}
-                        {paciente.cidade && <Text style={styles.pacienteInfo}>Cidade: {paciente.cidade}</Text>}
-                        {paciente.cep && <Text style={styles.pacienteInfo}>CEP: {paciente.cep}</Text>}
-                        <View style={styles.optionsContainer}>
-                          <TouchableOpacity style={styles.optionButton}>
-                            <Text style={styles.optionText}>Editar</Text>
-                          </TouchableOpacity>
-                          <TouchableOpacity
-                            style={styles.optionButton}
-                            onPress={() => handleDeletePaciente(paciente.nome)}
-                          >
-                            <Text style={styles.optionText}>Desativar perfil</Text>
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    )}
-                    <View style={styles.line} />
-                  </View>
-                ))}
-            </View>*/

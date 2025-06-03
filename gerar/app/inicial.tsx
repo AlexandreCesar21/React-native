@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 12,
     width: '100%',
-    marginBottom: 20, // espaçamento entre os botões
+    marginBottom: 20, 
   },
   buttonText: {
     color: '#fff',
